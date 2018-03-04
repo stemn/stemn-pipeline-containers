@@ -1,0 +1,32 @@
+{
+  "name": "@stemn/upload",
+  "version": "1.0.0",
+  "description": "A container for uploading files from a Stemn pipeline to a project.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "babel-node --presets env,stage-2 src",
+    "watch": "nodemon -L --watch src src --exec babel-node --presets env,stage-2",
+    "test:watch": "nodemon -L --watch src --watch test test --exec babel-node --presets env,stage-2",
+    "release": "bump --tag --push"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stemn/stemn-pipeline-containers.git"
+  },
+  "author": "Jackson Delahunt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stemn/stemn-pipeline-containers/issues"
+  },
+  "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
+  "dependencies": {
+    "fs-extra": "^5.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "nodemon": "^1.14.12",
+    "version-bump-prompt": "^4.0.0"
+  }
+}
