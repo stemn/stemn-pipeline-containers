@@ -2,7 +2,7 @@
   "name": "@stemn/upload",
   "version": "1.0.0",
   "description": "A container for uploading files from a Stemn pipeline to a project.",
-  "main": "src/index.js",
+  "main": "src",
   "scripts": {
     "start": "babel-node --presets env,stage-2 src",
     "watch": "nodemon -L --watch src src --exec babel-node --presets env,stage-2",
@@ -20,7 +20,8 @@
   },
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "dependencies": {
-    "fs-extra": "^5.0.0"
+    "fs-extra": "^5.0.0",
+    "micromatch": "^3.1.9"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
