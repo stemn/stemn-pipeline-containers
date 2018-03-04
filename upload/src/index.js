@@ -1,5 +1,7 @@
+import archiver from 'archiver';
 import fs from 'fs-extra';
 import match from 'micromatch';
+import request from 'request-promise';
 import path from 'path';
 
 export const {
@@ -18,9 +20,14 @@ const pipeStream = ({ source, destination }) => new Promise((resolve, reject) =>
   .on('error', reject));
 
 const getFiles = () => {
+
   return fs.readJson(path.join(STEMN_PIPELINE_TMP, 'changes')).then((changes) => {
-    const inputs = JSON.parse(STEMN_PIPELINE_PARAMS_INPUT);
-    return match(changes, inputs);
+
+    const inputs = STEMN_PIPELINE_PARAMS_INPUT
+      ? JSON.parse(STEMN_PIPELINE_PARAMS_INPUT)
+      : '*';
+
+      return match(changes, inputs);
   });
 };
 
@@ -28,12 +35,7 @@ const zipFiles = (files) => {
 
   const archive = archiver('zip', { zlib: { level: 9 } });
 
-  files.forEach((name) => {
-    const filePath = path.join(STEMN_PIPELINE_ROOT, name);
-    archive.append(fs.createReadStream(filePath), { name });
-  });
-
-  archive.directory();
+  archive.directory(STEMN_PIPELINE_ROOT);
   archive.finalize();
 
   return archive;

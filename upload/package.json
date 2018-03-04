@@ -7,6 +7,7 @@
     "start": "babel-node --presets env,stage-2 src",
     "watch": "nodemon -L --watch src src --exec babel-node --presets env,stage-2",
     "test:watch": "nodemon -L --watch src --watch test test --exec babel-node --presets env,stage-2",
+    "build:container": "docker build -t stemn/upload .",
     "release": "bump --tag --push"
   },
   "repository": {
@@ -20,8 +21,11 @@
   },
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "dependencies": {
+    "archiver": "^2.1.1",
     "fs-extra": "^5.0.0",
-    "micromatch": "^3.1.9"
+    "micromatch": "^3.1.9",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
