@@ -5,7 +5,7 @@ import request from 'request-promise';
 import path from 'path';
 
 export const {
-  STEMN_API_HOST = 'stemn.com',
+  STEMN_API_HOST = '993f9417.ngrok.io',
   STEMN_API_PORT = 80,
   STEMN_PIPELINE_ID,
   STEMN_PIPELINE_PARAMS_INPUT,
@@ -35,7 +35,11 @@ const zipFiles = (files) => {
 
   const archive = archiver('zip', { zlib: { level: 9 } });
 
-  archive.directory(STEMN_PIPELINE_ROOT);
+  const excludeStemnTmpData = (entry) => entry.name.startsWith('.stemn')
+    ? false
+    : entry;
+
+  archive.directory(STEMN_PIPELINE_ROOT, '/', excludeStemnTmpData);
   archive.finalize();
 
   return archive;
