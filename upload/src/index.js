@@ -35,11 +35,10 @@ const zipFiles = (files) => {
 
   const archive = archiver('zip', { zlib: { level: 9 } });
 
-  const excludeStemnTmpData = (entry) => entry.name.startsWith('.stemn')
-    ? false
-    : entry;
+  // remove '/pipeline' prefix from zip file paths
+  const stripPipelinePrefix = (path) => path.replace(new RegExp(`^${STEMN_PIPELINE_ROOT}`, 'g'), '');
 
-  archive.directory(STEMN_PIPELINE_ROOT, '/', excludeStemnTmpData);
+  files.forEach((file) => archive.file(file, { name: stripPipelinePrefix(file) }));
   archive.finalize();
 
   return archive;
