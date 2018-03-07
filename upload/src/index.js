@@ -1,8 +1,8 @@
 import archiver from 'archiver';
-import fs from 'fs-extra';
+import { readJson } from 'fs-extra';
 import match from 'micromatch';
+import { join } from 'path';
 import request from 'request-promise';
-import path from 'path';
 
 export const {
   STEMN_API_HOST = '993f9417.ngrok.io',
@@ -21,11 +21,11 @@ const pipeStream = ({ source, destination }) => new Promise((resolve, reject) =>
 
 const getFiles = () => {
 
-  return fs.readJson(path.join(STEMN_PIPELINE_TMP, 'changes')).then((changes) => {
+  return readJson(join(STEMN_PIPELINE_TMP, 'changes')).then((changes) => {
 
     const inputs = STEMN_PIPELINE_PARAMS_INPUT
       ? JSON.parse(STEMN_PIPELINE_PARAMS_INPUT)
-      : '*';
+      : '**';
 
       return match(changes, inputs);
   });
@@ -34,6 +34,8 @@ const getFiles = () => {
 const zipFiles = (files) => {
 
   const archive = archiver('zip', { zlib: { level: 9 } });
+
+  console.log('Uploading:\n', files.join('\n'));
 
   // remove '/pipeline' prefix from zip file paths
   const stripPipelinePrefix = (path) => path.replace(new RegExp(`^${STEMN_PIPELINE_ROOT}`, 'g'), '');
