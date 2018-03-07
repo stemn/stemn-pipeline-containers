@@ -9,8 +9,8 @@ export const {
   STEMN_API_PORT = 80,
   STEMN_PIPELINE_ID,
   STEMN_PIPELINE_PARAMS_INPUT,
-  STEMN_PIPELINE_ROOT = '/pipeline',
-  STEMN_PIPELINE_TMP = '/pipeline/.stemn',
+  STEMN_PIPELINE_ROOT,
+  STEMN_PIPELINE_TMP,
   STEMN_PIPELINE_TOKEN,
 } = process.env;
 
