@@ -5,8 +5,8 @@ import { join } from 'path';
 import request from 'request-promise';
 
 export const {
-  STEMN_API_HOST = '993f9417.ngrok.io',
-  STEMN_API_PORT = 80,
+  STEMN_API_HOST = 'test',
+  STEMN_API_PORT = 3000,
   STEMN_PIPELINE_ID,
   STEMN_PIPELINE_PARAMS_INPUT,
   STEMN_PIPELINE_ROOT,
