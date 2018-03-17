@@ -4,15 +4,15 @@ Pre-packaged applications for use in Stemn Pipelines.
 
 # Containers
 
-[stemn/cadquery](./cadquery)
+[stemn/cadquery](cadquery)
 
 Processes CadQuery python scripts.
 
-[stemn/email](./email)
+[stemn/email](email)
 
 Sends an email to a list of recipients with file attachments.
 
-[stemn/upload](./upload)
+[stemn/upload](upload)
 
 Uploads pipeline outputs to Stemn.
 
@@ -46,10 +46,10 @@ The [`uid` and `gid`](http://www.linfo.org/uid.html) of the user the container i
 
 #### `STEMN_PIPELINE_PARAMS`
 
-Any parameters passed to the container using `params` will be supplied as environment variables with the prefix `STEMN_PIPELINE_PARAMS`. For example, `subject` will be `STEMN_PIPELINE_PARAMS_SUBJECT`.
+Any parameters passed to the container using `params` will be supplied as environment variables with the prefix `STEMN_PIPELINE_PARAMS`. For example, `subject` will be [`STEMN_PIPELINE_PARAMS_SUBJECT`](email/#subject).
 
 # Conventions
 
 ## File Patterns
 
-All parameters used for selecting files (e.g. [`attachments`](./email/#attachments), `inputFiles`, `files`) are processed by [micromatch](https://github.com/micromatch/micromatch) which provides wildcard support for selecting multiple files e.g. `gear/*.stl`.
+All parameters used for selecting files (e.g. [`attachments`](email/#attachments), `inputFiles`, `files`) are processed by [micromatch](https://github.com/micromatch/micromatch) which provides wildcard support for selecting multiple files e.g. `gear/*.stl`.
