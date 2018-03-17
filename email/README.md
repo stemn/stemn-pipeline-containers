@@ -4,19 +4,19 @@ Sends an email to a list of recipients with file attachments.
 
 # Input Parameters
 
-### `to`:
+#### `to`
 
 A list of email addresses to send to.
 
-### `subject`:
+#### `subject`
 
 The subject of the email.
 
-### `body`:
+#### `body`
 
 The body content of the email.
 
-### `attachments`:
+#### `attachments`
 
 The files to attach to the email.
 
