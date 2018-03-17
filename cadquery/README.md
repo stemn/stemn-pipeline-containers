@@ -10,7 +10,7 @@ $schema: https://schemas.stemn.com/pipeline+v1
 label: Convert gear
 
 triggers:
-- files: gear/*.sldprt
+- files: resin-mould.py
   type: commit
 
 stages:
