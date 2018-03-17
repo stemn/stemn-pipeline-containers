@@ -1,4 +1,4 @@
-# 📤 CadQuery
+# ⚙️ CadQuery
 
 Processes CadQuery python scripts.
 
