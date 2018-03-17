@@ -16,6 +16,10 @@ Sends an email to a list of recipients with file attachments.
 
 Uploads pipeline outputs to Stemn.
 
+# Contributing
+
+Want to use an application in your Stemn pipeline that isn't available here? Create an issue to request it, or submit a pull request with your own version!
+
 # Environment Variables
 
 All containers in a Stemn pipeline are supplied the following environment variables:
@@ -46,7 +50,7 @@ The [`uid` and `gid`](http://www.linfo.org/uid.html) of the user the container i
 
 #### `STEMN_PIPELINE_PARAMS`
 
-Any parameters passed to the container using `params` will be supplied as environment variables with the prefix `STEMN_PIPELINE_PARAMS`. For example, `subject` will be [`STEMN_PIPELINE_PARAMS_SUBJECT`](email/#subject).
+Any parameters passed to the container using `params` will be supplied as environment variables with the prefix `STEMN_PIPELINE_PARAMS`. For example, [`subject`](email/#subject) will be `STEMN_PIPELINE_PARAMS_SUBJECT`.
 
 # Conventions
 
