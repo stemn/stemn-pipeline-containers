@@ -25,6 +25,7 @@
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
+    "@types/node": "^9.4.7",
     "nodemon": "^1.14.12",
     "typescript": "^2.7.2",
     "version-bump-prompt": "^4.0.0"
