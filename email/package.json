@@ -2,11 +2,10 @@
   "name": "@stemn/email",
   "version": "1.0.0",
   "description": "A container for emailing files and results of a Stemn pipeline.",
-  "main": "dist",
   "scripts": {
     "build": "yarn build:typescript && yarn build:container",
-    "build:typescript": "sh -v -e scripts/build.sh",
     "build:container": "docker build -t stemn/email .",
+    "build:typescript": "sh -v -e scripts/build.sh",
     "release": "bump --tag --push",
     "start": "node dist"
   },

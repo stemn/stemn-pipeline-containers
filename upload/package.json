@@ -2,10 +2,9 @@
   "name": "@stemn/upload",
   "version": "0.0.1",
   "description": "A container for uploading output files from a pipeline back to Stemn.",
-  "main": "dist",
   "scripts": {
     "build": "yarn build:typescript && yarn build:container",
-    "build:container": "docker build -t gcr.io/stemnapp/stemn-pipeline-runner .",
+    "build:container": "docker build -t stemn/upload .",
     "build:typescript": "sh -v -e scripts/build.sh",
     "release": "bump --tag --push",
     "start": "node dist"
