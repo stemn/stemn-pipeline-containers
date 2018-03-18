@@ -7,7 +7,8 @@
     "build": "yarn build:typescript && yarn build:container",
     "build:typescript": "sh -v -e scripts/build.sh",
     "build:container": "docker build -t stemn/email .",
-    "release": "bump --tag --push"
+    "release": "bump --tag --push",
+    "start": "node dist"
   },
   "repository": {
     "type": "git",

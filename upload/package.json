@@ -7,7 +7,8 @@
     "build": "yarn build:typescript && yarn build:container",
     "build:container": "docker build -t gcr.io/stemnapp/stemn-pipeline-runner .",
     "build:typescript": "sh -v -e scripts/build.sh",
-    "release": "bump --tag --push"
+    "release": "bump --tag --push",
+    "start": "node dist"
   },
   "repository": {
     "type": "git",
