@@ -1,6 +1,6 @@
 # 📦 Stemn Pipeline Containers
 
-Pre-packaged applications for use in Stemn Pipelines.
+Pre-packaged applications for use in Stemn pipelines.
 
 # Containers
 
@@ -32,6 +32,10 @@ The event that caused the pipeline to be run. Can be `revision`, `commit`, or `r
 
 The id of the pipeline.
 
+#### `STEMN_PIPELINE_PARAMS`
+
+Any parameters passed to the container using `params` will be supplied as environment variables with the prefix `STEMN_PIPELINE_PARAMS`. For example, [`subject`](email/#subject) will be `STEMN_PIPELINE_PARAMS_SUBJECT`.
+
 #### `STEMN_PIPELINE_ROOT`
 
 The root directory of the pipeline data directory. Defaults to `/pipeline`.
@@ -47,10 +51,6 @@ The directory used for storage of metadata about the pipeline (e.g. files create
 #### `STEMN_PIPELINE_UID_GID`
 
 The [`uid` and `gid`](http://www.linfo.org/uid.html) of the user the container is executing as.
-
-#### `STEMN_PIPELINE_PARAMS`
-
-Any parameters passed to the container using `params` will be supplied as environment variables with the prefix `STEMN_PIPELINE_PARAMS`. For example, [`subject`](email/#subject) will be `STEMN_PIPELINE_PARAMS_SUBJECT`.
 
 # Conventions
 

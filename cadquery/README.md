@@ -1,6 +1,6 @@
 # ⚙️ CadQuery
 
-Processes CadQuery python scripts.
+Processes [CadQuery](https://github.com/dcowden/cadquery) python scripts.
 
 # Sample Configuration
 
