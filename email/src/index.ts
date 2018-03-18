@@ -1,4 +1,4 @@
-export const {
+const {
   STEMN_PIPELINE_ID,
   STEMN_PIPELINE_PARAMS_TO,
   STEMN_PIPELINE_PARAMS_SUBJECT,
@@ -11,7 +11,7 @@ export const {
 
 const sendEmail = () => {
 
-  console.log({
+  console.log({ // tslint:disable-line
     STEMN_PIPELINE_ID,
     STEMN_PIPELINE_PARAMS_TO,
     STEMN_PIPELINE_PARAMS_SUBJECT,

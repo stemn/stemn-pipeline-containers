@@ -1,22 +1,29 @@
 {
-  "name": "@stemn/cadquery",
+  "name": "stemn-pipeline-containers",
   "version": "0.0.1",
-  "description": "A container for using CadQuery.",
+  "description": "Official Stemn Pipeline Containers",
+  "main": "index.js",
   "scripts": {
-    "build:container": "docker build -t stemn/cadquery .",
-    "release": "bump --tag --push"
+    "lint": "yarn tslint --project tsconfig.lint.json"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stemn/stemn-pipeline-containers.git"
   },
+  "keywords": [
+    "stemn",
+    "pipeline",
+    "containers"
+  ],
   "author": "Jackson Delahunt",
-  "license": "MIT",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/stemn/stemn-pipeline-containers/issues"
   },
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "devDependencies": {
-    "version-bump-prompt": "^4.0.0"
+    "tslint": "^5.9.1",
+    "tslint-config-temando": "^1.5.11",
+    "typescript": "^2.7.2"
   }
 }

@@ -2,11 +2,10 @@
   "name": "@stemn/email",
   "version": "1.0.0",
   "description": "A container for emailing files and results of a Stemn pipeline.",
-  "main": "src",
+  "main": "dist",
   "scripts": {
-    "start": "babel-node --presets env,stage-2 src",
-    "watch": "nodemon -L --watch src src --exec babel-node --presets env,stage-2",
-    "test:watch": "nodemon -L --watch src --watch test test --exec babel-node --presets env,stage-2",
+    "build": "yarn build:typescript && yarn build:container",
+    "build:typescript": "sh -v -e scripts/build.sh",
     "build:container": "docker build -t stemn/email .",
     "release": "bump --tag --push"
   },
@@ -25,10 +24,8 @@
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-2": "^6.24.1",
     "nodemon": "^1.14.12",
+    "typescript": "^2.7.2",
     "version-bump-prompt": "^4.0.0"
   }
 }

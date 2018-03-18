@@ -2,12 +2,11 @@
   "name": "@stemn/upload",
   "version": "0.0.1",
   "description": "A container for uploading output files from a pipeline back to Stemn.",
-  "main": "src",
+  "main": "dist",
   "scripts": {
-    "start": "babel-node --presets env,stage-2 src",
-    "watch": "nodemon -L --watch src src --exec babel-node --presets env,stage-2",
-    "test:watch": "nodemon -L --watch src --watch test test --exec babel-node --presets env,stage-2",
-    "build:container": "docker build -t stemn/upload .",
+    "build": "yarn build:typescript && yarn build:container",
+    "build:container": "docker build -t gcr.io/stemnapp/stemn-pipeline-runner .",
+    "build:typescript": "sh -v -e scripts/build.sh",
     "release": "bump --tag --push"
   },
   "repository": {
@@ -28,10 +27,11 @@
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "nodemon": "^1.14.12",
+    "@types/archiver": "^2.1.0",
+    "@types/fs-extra": "^5.0.1",
+    "@types/micromatch": "^3.1.0",
+    "@types/node": "^9.4.7",
+    "typescript": "^2.7.2",
     "version-bump-prompt": "^4.0.0"
   }
 }

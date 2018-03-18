@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM stemn/pipeline-base:latest
 
 WORKDIR /app
 

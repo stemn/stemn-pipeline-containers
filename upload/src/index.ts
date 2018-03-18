@@ -1,23 +1,18 @@
-import archiver from 'archiver';
+import * as archiver from 'archiver';
 import { readJson } from 'fs-extra';
-import match from 'micromatch';
+import * as match from 'micromatch';
 import { join } from 'path';
 import request from 'request-promise';
 
-export const {
+const {
   STEMN_API_HOST = 'test',
   STEMN_API_PORT = 3000,
   STEMN_PIPELINE_ID,
   STEMN_PIPELINE_PARAMS_INPUT,
-  STEMN_PIPELINE_ROOT,
-  STEMN_PIPELINE_TMP,
+  STEMN_PIPELINE_ROOT = '/pipeline',
+  STEMN_PIPELINE_TMP = '/pipeline/.stemn',
   STEMN_PIPELINE_TOKEN,
 } = process.env;
-
-const pipeStream = ({ source, destination }) => new Promise((resolve, reject) => source
-  .pipe(destination)
-  .on('end', resolve)
-  .on('error', reject));
 
 const getFiles = () => {
 
@@ -27,18 +22,18 @@ const getFiles = () => {
       ? JSON.parse(STEMN_PIPELINE_PARAMS_INPUT)
       : '**';
 
-      return match(changes, inputs);
+    return match(changes, inputs);
   });
 };
 
-const zipFiles = (files) => {
+const zipFiles = (files: string[]) => {
 
   const archive = archiver('zip', { zlib: { level: 9 } });
 
-  console.log('Uploading:\n', files.join('\n'));
+  console.log('Uploading:\n', files.join('\n')); // tslint:disable-line
 
   // remove '/pipeline' prefix from zip file paths
-  const stripPipelinePrefix = (path) => path.replace(new RegExp(`^${STEMN_PIPELINE_ROOT}`, 'g'), '');
+  const stripPipelinePrefix = (path: string) => path.replace(new RegExp(`^${STEMN_PIPELINE_ROOT}`, 'g'), '');
 
   files.forEach((file) => archive.file(file, { name: stripPipelinePrefix(file) }));
   archive.finalize();
@@ -46,7 +41,7 @@ const zipFiles = (files) => {
   return archive;
 };
 
-export const upload = (files) => {
+const upload = (files: string[]) => {
 
   const source = zipFiles(files);
 
@@ -54,13 +49,16 @@ export const upload = (files) => {
     uri: `http://${STEMN_API_HOST}:${STEMN_API_PORT}/api/v1/pipelines/${STEMN_PIPELINE_ID}`,
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${STEMN_PIPELINE_TOKEN}`,
+      'Authorization': `Bearer ${STEMN_PIPELINE_TOKEN}`,
       'Content-Disposition': `attachment;filename=${STEMN_PIPELINE_ID}.zip`,
       'Content-Type': 'application/zip',
-    }
+    },
   });
 
-  return pipeStream({ source, destination });
+  return new Promise((resolve, reject) => source
+    .pipe(destination)
+    .on('end', resolve)
+    .on('error', reject));
 };
 
 module.exports = getFiles().then(upload);
