@@ -1,8 +1,8 @@
-import * as archiver from 'archiver';
+import archiver from 'archiver';
 import { readJson } from 'fs-extra';
-import * as match from 'micromatch';
+import match from 'micromatch';
 import { join } from 'path';
-import * as request from 'request-promise';
+import request from 'request-promise';
 
 const {
   STEMN_API_HOST = 'test',
