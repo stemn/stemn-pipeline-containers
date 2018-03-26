@@ -5,4 +5,4 @@ RUN apk add --no-cache \
     gosu nodejs-current yarn
 
 # make the yarn cache directory readable and writable to all
-RUN mkdir /.cache && chown 666 /.cache
+RUN mkdir /.cache && chmod -R 666 /.cache
