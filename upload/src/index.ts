@@ -7,6 +7,7 @@ import request from 'request-promise';
 const {
   STEMN_API_HOST = 'test',
   STEMN_API_PORT = 3000,
+  STEMN_API_PROTOCOL = 'http',
   STEMN_PIPELINE_ID,
   STEMN_PIPELINE_PARAMS_INPUT,
   STEMN_PIPELINE_ROOT = '/pipeline',
@@ -46,7 +47,7 @@ const upload = (files: string[]) => {
   const source = zipFiles(files);
 
   const destination = request({
-    uri: `http://${STEMN_API_HOST}:${STEMN_API_PORT}/api/v1/pipelines/${STEMN_PIPELINE_ID}`,
+    uri: `${STEMN_API_PROTOCOL}://${STEMN_API_HOST}:${STEMN_API_PORT}/api/v1/pipelines/${STEMN_PIPELINE_ID}`,
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${STEMN_PIPELINE_TOKEN}`,
