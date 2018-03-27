@@ -1,3 +1,3 @@
 for i in $(ls -d */);
-  do docker build -t stemn/${i%%/} ${i%%/};
+  do docker build -t stemn/${i%%/}:latest ${i%%/};
 done
