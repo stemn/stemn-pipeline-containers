@@ -63,4 +63,4 @@ const upload = (files: string[]) => {
 
 export default getFiles()
   .then(upload)
-  .catch(() => process.exit(1));
+  .catch(() => process.exit(3));
