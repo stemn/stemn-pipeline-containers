@@ -2,7 +2,7 @@ import archiver from 'archiver';
 import { readJson } from 'fs-extra';
 import match from 'micromatch';
 import { join } from 'path';
-import request from 'request-promise';
+import requestp from 'request-promise';
 
 const {
   STEMN_API_HOST = 'test',
@@ -46,7 +46,7 @@ const upload = (files: string[]) => {
 
   const source = zipFiles(files);
 
-  const destination = request({
+  const destination = requestp({
     uri: `${STEMN_API_PROTOCOL}://${STEMN_API_HOST}:${STEMN_API_PORT}/api/v1/pipelines/${STEMN_PIPELINE_ID}`,
     method: 'POST',
     headers: {
@@ -56,10 +56,11 @@ const upload = (files: string[]) => {
     },
   });
 
-  return new Promise((resolve, reject) => source
-    .pipe(destination)
-    .on('end', resolve)
-    .on('error', reject));
+  source.pipe(destination);
+
+  return destination;
 };
 
-module.exports = getFiles().then(upload);
+export default getFiles()
+  .then(upload)
+  .catch(() => process.exit(1));
