@@ -31,10 +31,10 @@ const zipFiles = (files: string[]) => {
 
   const archive = archiver('zip', { zlib: { level: 9 } });
 
-  console.log('Uploading:\n', files.join('\n')); // tslint:disable-line
+  // remove '/pipeline/' prefix from zip file paths
+  const stripPipelinePrefix = (path: string) => path.replace(new RegExp(`^${STEMN_PIPELINE_ROOT}/`, 'g'), '');
 
-  // remove '/pipeline' prefix from zip file paths
-  const stripPipelinePrefix = (path: string) => path.replace(new RegExp(`^${STEMN_PIPELINE_ROOT}`, 'g'), '');
+  console.log('Uploading:\n', files.map(stripPipelinePrefix).join('\n')); // tslint:disable-line
 
   files.forEach((file) => archive.file(file, { name: stripPipelinePrefix(file) }));
   archive.finalize();
