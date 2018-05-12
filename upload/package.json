@@ -1,6 +1,6 @@
 {
   "name": "@stemn/upload",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A container for uploading output files from a pipeline back to Stemn.",
   "scripts": {
     "build": "yarn build:typescript && yarn build:container",
