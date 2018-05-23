@@ -10,10 +10,13 @@ const {
   STEMN_API_PROTOCOL = 'http',
   STEMN_PIPELINE_ID,
   STEMN_PIPELINE_PARAMS_INPUT,
+  STEMN_PIPELINE_PARAMS_DEBUG,
   STEMN_PIPELINE_ROOT = '/pipeline',
   STEMN_PIPELINE_TMP = '/pipeline/.stemn',
   STEMN_PIPELINE_TOKEN,
 } = process.env;
+
+requestp.debug = STEMN_PIPELINE_PARAMS_DEBUG;
 
 const getFiles = () => {
 
