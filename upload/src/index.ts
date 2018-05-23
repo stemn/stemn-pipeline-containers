@@ -1,6 +1,6 @@
 import archiver from 'archiver';
 import { readJson } from 'fs-extra';
-import hyperquest from 'hyperquest-promise';
+import { post } from 'hyperquest-promise';
 import match from 'micromatch';
 import { join } from 'path';
 
@@ -10,13 +10,10 @@ const {
   STEMN_API_PROTOCOL = 'http',
   STEMN_PIPELINE_ID,
   STEMN_PIPELINE_PARAMS_INPUT,
-  // STEMN_PIPELINE_PARAMS_DEBUG,
   STEMN_PIPELINE_ROOT = '/pipeline',
   STEMN_PIPELINE_TMP = '/pipeline/.stemn',
   STEMN_PIPELINE_TOKEN,
 } = process.env;
-
-// hyperquest.debug = STEMN_PIPELINE_PARAMS_DEBUG;
 
 const getFiles = () => {
 
@@ -58,9 +55,7 @@ const upload = (files: string[]) => {
   };
 
   const source = zipFiles(files);
-  const destination = hyperquest(url, options);
-
-  source.pipe(destination);
+  const destination = post(url, options, source);
 
   return destination;
 };
