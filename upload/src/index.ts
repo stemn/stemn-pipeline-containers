@@ -1,8 +1,8 @@
 import archiver from 'archiver';
 import { readJson } from 'fs-extra';
+import hyperquest from 'hyperquest-promise';
 import match from 'micromatch';
 import { join } from 'path';
-import requestp from 'request-promise';
 
 const {
   STEMN_API_HOST = 'test',
@@ -10,13 +10,13 @@ const {
   STEMN_API_PROTOCOL = 'http',
   STEMN_PIPELINE_ID,
   STEMN_PIPELINE_PARAMS_INPUT,
-  STEMN_PIPELINE_PARAMS_DEBUG,
+  // STEMN_PIPELINE_PARAMS_DEBUG,
   STEMN_PIPELINE_ROOT = '/pipeline',
   STEMN_PIPELINE_TMP = '/pipeline/.stemn',
   STEMN_PIPELINE_TOKEN,
 } = process.env;
 
-requestp.debug = STEMN_PIPELINE_PARAMS_DEBUG;
+// hyperquest.debug = STEMN_PIPELINE_PARAMS_DEBUG;
 
 const getFiles = () => {
 
@@ -47,17 +47,18 @@ const zipFiles = (files: string[]) => {
 
 const upload = (files: string[]) => {
 
-  const source = zipFiles(files);
-
-  const destination = requestp({
-    uri: `${STEMN_API_PROTOCOL}://${STEMN_API_HOST}:${STEMN_API_PORT}/api/v1/pipelines/${STEMN_PIPELINE_ID}`,
+  const url = `${STEMN_API_PROTOCOL}://${STEMN_API_HOST}:${STEMN_API_PORT}/api/v1/pipelines/${STEMN_PIPELINE_ID}`;
+  const options = {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${STEMN_PIPELINE_TOKEN}`,
       'Content-Disposition': `attachment;filename=${STEMN_PIPELINE_ID}.zip`,
       'Content-Type': 'application/zip',
     },
-  });
+  };
+
+  const source = zipFiles(files);
+  const destination = hyperquest(url, options);
 
   source.pipe(destination);
 

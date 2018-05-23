@@ -1,1 +1,1 @@
-declare module "request-promise"
+declare module "hyperquest-promise"
