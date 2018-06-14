@@ -8,4 +8,4 @@ RUN yarn
 
 ADD dist dist
 
-ENTRYPOINT yarn start
+ENTRYPOINT cd /app && yarn start
