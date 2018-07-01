@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "A container for emailing files and results of a Stemn pipeline.",
   "scripts": {
-    "build": "yarn build:typescript && yarn build:container",
-    "build:container": "docker build -t stemn/email .",
-    "build:typescript": "sh -v -e scripts/build.sh",
+    "build": "yarn build:project && yarn build:container",
+    "build:container": "docker build -t stemn/upload .",
+    "build:project": "tsc",
     "release": "bump --tag --push",
-    "start": "node dist"
+    "start": "ts-node"
   },
   "repository": {
     "type": "git",
