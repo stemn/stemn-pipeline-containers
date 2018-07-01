@@ -3,12 +3,13 @@
   "version": "0.0.8",
   "description": "A container for uploading output files from a pipeline back to Stemn.",
   "scripts": {
-    "build": "yarn build:typescript && yarn build:container",
+    "build": "yarn build:project && yarn build:container",
     "build:container": "docker build -t stemn/upload .",
-    "build:typescript": "sh -v -e scripts/build.sh",
-    "release": "bump --tag --push",
-    "start": "node dist"
+    "build:project": "tsc",
+    "release": "npm publish",
+    "start": "ts-node"
   },
+  "main": "dist",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stemn/stemn-pipeline-containers.git"
@@ -31,8 +32,8 @@
     "@types/archiver": "^2.1.1",
     "@types/fs-extra": "^5.0.1",
     "@types/micromatch": "^3.1.0",
-    "@types/node": "^9.4.7",
-    "typescript": "^2.7.2",
+    "@types/node": "^9",
+    "typescript": "^2.9.2",
     "version-bump-prompt": "^4.0.0"
   }
 }

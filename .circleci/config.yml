@@ -1,0 +1,99 @@
+defaults: &defaults
+  working_directory: ~/project
+  docker: [ image: 'circleci/node:9' ]
+
+restoreCache: &restoreCache
+  restore_cache:
+    keys:
+      - deps-{{ checksum "package.json" }}
+      - deps-
+      - build-{{ .Environment.CIRCLE_SHA1 }}
+
+attachWorkspace: &attachWorkspace
+  attach_workspace:
+    at: '.'
+
+version: 2
+jobs:
+  build:
+    <<: *defaults
+
+    steps:
+      - checkout
+      - *restoreCache
+      - run: yarn lerna bootstrap
+      - save_cache:
+          paths: [node_modules]
+          key: deps-{{ checksum "package.json" }}
+      - run: yarn lerna run build
+      - persist_to_workspace:
+          root: '.'
+          paths: ["**/build"]
+
+  lintTest:
+    <<: *defaults
+
+    steps:
+      - checkout
+      - *restoreCache
+      - *attachWorkspace
+      - run: yarn lint
+
+  unitTest:
+    <<: *defaults
+
+    steps:
+      - checkout
+      - *restoreCache
+      - *attachWorkspace
+      - run: yarn test:coverage
+
+  changelogTest:
+    <<: *defaults
+
+    steps:
+      - checkout
+      - *restoreCache
+      - *attachWorkspace
+      - run: yarn changelog:verify
+
+  deploy:
+    <<: *defaults
+
+    steps:
+      - checkout
+      - *restoreCache
+      - *attachWorkspace
+      - run:
+          command: |
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+            yarn lerna publish
+
+tagFilters: &tagFilters
+  filters: { tags: { only: /.*/ } }
+
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - build:
+          <<: *tagFilters
+
+      - lintTest:
+          <<: *tagFilters
+          requires: [build]
+
+      - unitTest:
+          <<: *tagFilters
+          requires: [build]
+
+      - changelogTest:
+          <<: *tagFilters
+          requires: [build]
+
+      - deploy:
+          requires: [build, lintTest, unitTest, changelogTest]
+          filters:
+            tags: { only: /^v.*/ }
+            branches: { ignore: /.*/ }
+

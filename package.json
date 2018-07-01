@@ -1,5 +1,6 @@
 {
   "name": "stemn-pipeline-containers",
+  "private": true,
   "version": "0.0.1",
   "description": "Official Stemn Pipeline Containers",
   "main": "index.js",
@@ -24,8 +25,9 @@
   "devDependencies": {
     "lerna": "^2.11.0",
     "ts-node": "^7.0.0",
-    "tslint": "^5.9.1",
+    "tslint": "^5.10.0",
     "tslint-config-temando": "^1.5.11",
     "typescript": "^2.9.2"
-  }
+  },
+  "workspaces": ["packages/*"]
 }
