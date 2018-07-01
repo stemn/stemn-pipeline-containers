@@ -22,8 +22,10 @@
   },
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "devDependencies": {
+    "lerna": "^2.11.0",
+    "ts-node": "^7.0.0",
     "tslint": "^5.9.1",
     "tslint-config-temando": "^1.5.11",
-    "typescript": "^2.7.2"
+    "typescript": "^2.9.2"
   }
 }
