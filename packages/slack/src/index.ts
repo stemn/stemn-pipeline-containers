@@ -1,4 +1,4 @@
-import * as request from 'axios';
+import request from 'request-promise';
 
 export function sendSlackNotification () {
 

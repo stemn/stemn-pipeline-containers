@@ -1,8 +1,8 @@
-import * as request from 'axios';
 import Bluebird from 'bluebird';
-import { open, pathExists, read, stat } from 'fs-extra';
+import { openSync, pathExists, readFile, stat } from 'fs-extra';
 import Markdown from 'markdown-it';
 import { basename, join } from 'path';
+import request from 'request-promise';
 
 const md = Markdown({
   html: true,
@@ -14,22 +14,26 @@ const md = Markdown({
  * Check the combined attachments do not exceed the specified limit
  */
 function withinAttachmentLimit (filepaths: string[], limit: number) {
-  return Bluebird.map(filepaths, (fp: string) => stat(fp).size)
+  const getFileSize = (fp: string) => stat(fp).then((stats) => stats.size);
+  return Bluebird.map(filepaths, getFileSize)
     .then((sizes: number[]) => sizes.reduce((acc, size) => acc + size, 0) <= limit);
 }
 
 /**
- * Encode attachement to base64 and create sendgrid attachement object
+ * Encode attachment to base64 and create sendgrid attachement object
  */
 function encodeAttachment (filepath: string) {
-  return open(filepath)
-    .then(read)
+  const fd = openSync(filepath, 'r');
+  return readFile(fd)
     .then((data: Buffer) => ({ filename: basename(filepath), content: data.toString('base64') }))
     .catch((e: Error) => console.log(e.message)); // tslint:disable-line:no-console
 }
 
+/**
+ * Determine valid attachments, ensure attachment set within size limit then encode to sendgrid attachment object
+ */
 function encodeAttachments (filepaths: string[], limit: number) {
-  return Bluebird.filter(filepaths, pathExists).then((paths) => {
+  return Bluebird.filter(filepaths, pathExists).then((paths: string[]) => {
     return withinAttachmentLimit(paths, limit)
       .then((within: boolean) => {
         if (!within) {
@@ -40,6 +44,9 @@ function encodeAttachments (filepaths: string[], limit: number) {
   });
 }
 
+/**
+ * Render markdown content to html, create sendgrid content object with plaintext fallback
+ */
 function renderContent (content: string) {
   const htmlContent = {
     type: 'text/html',
@@ -59,9 +66,9 @@ export function sendEmail () {
     STEMN_PIPELINE_PARAMS_TO: emailRecipients,
     STEMN_PIPELINE_PARAMS_SUBJECT: subject = 'Update from Stemn pipeline',
     STEMN_PIPELINE_PARAMS_STEMN_EMAIL: stemnEmail = 'bot@stemn.com',
-    STEMN_PIPELINE_PARAMS_BODY: emailContent,
+    STEMN_PIPELINE_PARAMS_BODY: emailContent = '',
     STEMN_PIPELINE_PARAMS_ATTACHMENTS: attachmentFiles,
-    STEMN_PIPELINE_PARAMS_MAX_ATTACHMENTS: attachementLimit = 30e6,
+    STEMN_PIPELINE_PARAMS_MAX_ATTACHMENTS: attachmentLimit = 30e6,
     STEMN_PIPELINE_SENDGRID_AUTH: sendgridAuth,
   } = process.env;
 
@@ -76,20 +83,25 @@ export function sendEmail () {
   const toEmails: string[] = JSON.parse(<string> emailRecipients);
   const personalizations = toEmails.map((email) => ({ to: { email } }));
 
-  const attachmentPaths: string[] = JSON.parse(<string> attachmentFiles).map((path) => join(pipelineRoot, path));
-  const attachments = encodeAttachments(attachmentPaths, attachementLimit);
-  const content = ;
+  const generateAttachments = () => {
+    const attachmentPaths: string[] = JSON.parse(<string> attachmentFiles).map((path: string) => join(pipelineRoot, path));
+    return encodeAttachments(attachmentPaths, Number(attachmentLimit));
+  };
+
+  const attachments = attachmentFiles ? generateAttachments() : [];
+  const content = renderContent(emailContent);
 
   request.post('https://api.sendgrid.com/v3/mail/send', {
-    headers: { Authorization: 'Bearer ${ sendgridAuth }' },
-    data: {
+    headers: { Authorization: `Bearer ${ sendgridAuth }` },
+    body: {
       from: stemnEmail,
       'reply-to': { email: stemnEmail },
       subject,
-      content: renderContent(emailContent),
+      content,
       personalizations,
       attachments,
-    }
+    },
+    json: true,
   });
 
 }

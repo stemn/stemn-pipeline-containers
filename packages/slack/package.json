@@ -1,5 +1,5 @@
 {
-  "name": "@stemn/email",
+  "name": "@stemn/slack",
   "version": "1.0.0",
   "description": "A container for sending Slack notifications from a Stemn pipeline",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "dependencies": {
-    "axios": "^0.18.0"
+    "request-promise": "^4.2.2"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
