@@ -18,15 +18,36 @@
 13 error test Errored while running script in '@stemn/email'
 14 error execute callback with error
 15 error Error: Command failed: yarn run test
+15 error [0m[7m[1m[31m FAIL [39m[22m[27m[0m [2msrc/__tests__/[22m[1memail.test.ts[22m
+15 error   [31m✕[39m [2mworks (5ms)[22m
+15 error
+15 error [1m[31m  [1m● [1mworks[39m[22m
+15 error
+15 error     TypeError: Cannot read property 'sendEmail' of undefined
+15 error [2m[22m
+15 error [2m    [0m [90m 2 | [39m[0m[22m
+15 error [2m    [0m [90m 3 | [39mit([32m'works'[39m[33m,[39m () [33m=>[39m {[0m[22m
+15 error [2m    [0m[31m[1m>[2m[39m[90m 4 | [39m  expect(sendEmail)[33m.[39mtoBeInstanceOf([33mFunction[39m)[0m[22m
+15 error [2m    [0m [90m   | [39m         [31m[1m^[2m[39m[0m[22m
+15 error [2m    [0m [90m 5 | [39m})[0m[22m
+15 error [2m[22m
+15 error [2m      [2mat Object.<anonymous>.it ([2m[0m[36msrc/__tests__/email.test.ts[39m[0m[2m:4:10)[2m[22m
+15 error
+15 error [1mTest Suites: [22m[1m[31m1 failed[39m[22m, 1 total
+15 error [1mTests:       [22m[1m[31m1 failed[39m[22m, 1 total
+15 error [1mSnapshots:   [22m0 total
+15 error [1mTime:[22m        1.646s
+15 error [2mRan all test suites[22m[2m.[22m
 15 error error Command failed with exit code 1.
 15 error $ jest
-15 error [1mNo tests found[22m
-15 error In [1m/home/sam/W/STEMN/stemn-pipeline-containers/packages/email[22m
-15 error   5 files checked.
-15 error   testMatch:  - 5 matches
-15 error   testPathIgnorePatterns: [33m/build/,/node_modules/[39m - 5 matches
-15 error   testRegex: [33m.(test|spec)\.ts$[39m - 0 matches
-15 error Pattern:  - 0 matches
+15 error   [2mconsole.log[22m [2msrc/index.ts:14[22m
+15 error     { STEMN_PIPELINE_ID: undefined,
+15 error       STEMN_PIPELINE_PARAMS_TO: undefined,
+15 error       STEMN_PIPELINE_PARAMS_SUBJECT: undefined,
+15 error       STEMN_PIPELINE_PARAMS_BODY: undefined,
+15 error       STEMN_PIPELINE_PARAMS_ATTACHMENTS: undefined,
+15 error       STEMN_PIPELINE_TOKEN: undefined }
+15 error
 15 error info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
 15 error
 15 error     at Promise.all.then.arr (/home/sam/W/STEMN/stemn-pipeline-containers/node_modules/lerna/node_modules/execa/index.js:236:11)

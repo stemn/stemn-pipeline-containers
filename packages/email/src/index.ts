@@ -22,4 +22,4 @@ export const sendEmail = () => {
 
 };
 
-module.exports = sendEmail();
+export default sendEmail();
