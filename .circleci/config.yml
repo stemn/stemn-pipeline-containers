@@ -21,6 +21,7 @@ jobs:
     steps:
       - checkout
       - *restoreCache
+      - setup_remote_docker
       - run:
           command: |
             yarn
