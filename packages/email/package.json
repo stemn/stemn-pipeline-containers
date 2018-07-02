@@ -5,6 +5,7 @@
   "scripts": {
     "test": "jest",
     "test:coverage": "yarn test --coverage",
+    "lint": "tslint --project tsconfig.json",
     "build": "yarn build:project && yarn build:container",
     "build:container": "docker build -t stemn/email .",
     "build:project": "tsc",
