@@ -1,0 +1,4 @@
+author: Caspian Baska
+title: @stemn/email
+version: 0.0.1
+param-schema: https://raw.githubusercontent.com/stemn/stemn-pipeline-containers/master/packages/email/IParams.json
