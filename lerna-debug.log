@@ -1,0 +1,33 @@
+0 silly input [ 'test' ]
+1 silly flags { _: [ 'run' ],
+1 silly flags   'reject-cycles': false,
+1 silly flags   rejectCycles: false,
+1 silly flags   script: 'test',
+1 silly flags   args: [] }
+2 verbose rootPath /home/sam/W/STEMN/stemn-pipeline-containers
+3 info version 2.11.0
+4 silly existsSync /home/sam/W/STEMN/stemn-pipeline-containers/VERSION
+5 info versioning independent
+6 silly initialize attempt
+7 silly initialize success
+8 silly execute attempt
+9 silly runScriptInDir test [] email
+10 silly getExecOpts { cwd: '/home/sam/W/STEMN/stemn-pipeline-containers/packages/email' }
+11 silly runScriptInDir test [] upload
+12 silly getExecOpts { cwd: '/home/sam/W/STEMN/stemn-pipeline-containers/packages/upload' }
+13 error test Errored while running script in '@stemn/email'
+14 error execute callback with error
+15 error Error: Command failed: yarn run test
+15 error error Command failed with exit code 1.
+15 error $ jest
+15 error [1mNo tests found[22m
+15 error In [1m/home/sam/W/STEMN/stemn-pipeline-containers/packages/email[22m
+15 error   5 files checked.
+15 error   testMatch:  - 5 matches
+15 error   testPathIgnorePatterns: [33m/build/,/node_modules/[39m - 5 matches
+15 error   testRegex: [33m.(test|spec)\.ts$[39m - 0 matches
+15 error Pattern:  - 0 matches
+15 error info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+15 error
+15 error     at Promise.all.then.arr (/home/sam/W/STEMN/stemn-pipeline-containers/node_modules/lerna/node_modules/execa/index.js:236:11)
+15 error     at <anonymous>

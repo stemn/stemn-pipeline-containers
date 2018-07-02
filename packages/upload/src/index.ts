@@ -15,7 +15,7 @@ const {
   STEMN_PIPELINE_TOKEN,
 } = process.env;
 
-const getFiles = () => {
+export const getFiles = () => {
 
   return readJson(join(STEMN_PIPELINE_TMP, 'changes')).then((changes) => {
 
