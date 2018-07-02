@@ -114,6 +114,7 @@ export function sendEmail () {
 
   requestPromise.post('https://api.sendgrid.com/v3/mail/send', {
     headers: { Authorization: `Bearer ${ sendgridAuth }` },
+    json: true,
     body: {
       from: stemnEmail,
       'reply-to': { email: stemnEmail },
@@ -122,7 +123,6 @@ export function sendEmail () {
       personalizations,
       attachments,
     },
-    json: true,
   });
 
 }
