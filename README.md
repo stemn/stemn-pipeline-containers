@@ -16,6 +16,10 @@ Sends an email to a list of recipients with file attachments.
 
 Uploads pipeline outputs to Stemn.
 
+[stemn/slack](slack)
+
+Sends a notification to a specified Slack channel.
+
 # Contributing
 
 Want to use an application in your Stemn pipeline that isn't available here? Create an issue to request it, or submit a pull request with your own version!
@@ -57,3 +61,14 @@ The [`uid` and `gid`](http://www.linfo.org/uid.html) of the user the container i
 ## File Patterns
 
 All parameters used for selecting files (e.g. [`attachments`](email/#attachments), `inputFiles`, `files`) are processed by [micromatch](https://github.com/micromatch/micromatch) which provides wildcard support for selecting multiple files e.g. `gear/*.stl`.
+
+## Container Manifest
+
+A container manifest describes a set of metadata for a container.
+
+```yaml
+image: your-image-title
+author: Author S. Name
+version: 1.0
+schema: https://www.link-to-json-schema.com/schema.json
+```

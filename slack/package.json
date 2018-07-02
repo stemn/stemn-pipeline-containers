@@ -1,0 +1,33 @@
+{
+  "name": "@stemn/email",
+  "version": "1.0.0",
+  "description": "A container for sending Slack notifications from a Stemn pipeline",
+  "scripts": {
+    "build": "yarn build:typescript && yarn build:container",
+    "build:container": "docker build -t stemn/email .",
+    "build:typescript": "sh -v -e scripts/build.sh",
+    "release": "bump --tag --push",
+    "start": "node dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stemn/stemn-pipeline-containers.git"
+  },
+  "author": "Caspian Baska",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stemn/stemn-pipeline-containers/issues"
+  },
+  "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
+  "dependencies": {
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/node": "^10.5.1",
+    "nodemon": "^1.14.12",
+    "tslint-config-temando": "^1.5.11",
+    "typescript": "^2.9.2",
+    "version-bump-prompt": "^4.0.0"
+  }
+}
