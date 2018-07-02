@@ -4,13 +4,12 @@ const {
   STEMN_PIPELINE_PARAMS_SUBJECT,
   STEMN_PIPELINE_PARAMS_BODY,
   STEMN_PIPELINE_PARAMS_ATTACHMENTS,
-  STEMN_PIPELINE_ROOT,
-  STEMN_PIPELINE_TMP,
+  // STEMN_PIPELINE_ROOT,
+  // STEMN_PIPELINE_TMP,
   STEMN_PIPELINE_TOKEN,
 } = process.env;
 
-const sendEmail = () => {
-
+export function sendEmail () {
   console.log({ // tslint:disable-line
     STEMN_PIPELINE_ID,
     STEMN_PIPELINE_PARAMS_TO,
@@ -19,7 +18,4 @@ const sendEmail = () => {
     STEMN_PIPELINE_PARAMS_ATTACHMENTS,
     STEMN_PIPELINE_TOKEN,
   });
-
 };
-
-module.exports = sendEmail();

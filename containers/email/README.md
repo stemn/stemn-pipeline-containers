@@ -22,7 +22,7 @@ The files to attach to the email.
 
 # Sample Configuration
 
-```
+```yaml
 $schema: https://schemas.stemn.com/pipeline+v1
 
 label: Email updates when a new version of the gear is released

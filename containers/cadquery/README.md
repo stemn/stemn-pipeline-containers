@@ -1,18 +1,16 @@
-# 📤 Upload
+# ⚙️ CadQuery
 
-Uploads pipeline outputs to Stemn.
-
-Files are uploaded to the same location as created in the pipeline.
+Processes [CadQuery](https://github.com/dcowden/cadquery) python scripts.
 
 # Sample Configuration
 
-```
+```yaml
 $schema: https://schemas.stemn.com/pipeline+v1
 
 label: Convert gear
 
 triggers:
-- files: gear/*.sldprt
+- files: resin-mould.py
   type: commit
 
 stages:
@@ -27,6 +25,6 @@ stages:
   steps:
   - label: Upload to Stemn
     image: stemn/upload:latest
-    inputFiles:
+    files:
     - cqobject*
 ```

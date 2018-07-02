@@ -3,11 +3,18 @@
   "version": "1.0.0",
   "description": "A container for emailing files and results of a Stemn pipeline.",
   "scripts": {
-    "build": "yarn build:typescript && yarn build:container",
+    "test": "jest",
+    "test:coverage": "yarn test --coverage",
+    "lint": "tslint --project tsconfig.json",
+    "build": "yarn build:project && yarn build:container",
     "build:container": "docker build -t stemn/email .",
-    "build:typescript": "sh -v -e scripts/build.sh",
+    "build:project": "tsc",
     "release": "bump --tag --push",
-    "start": "node dist"
+    "changelog:verify": "changelog-verify CHANGELOG.md",
+    "changelog:version": "version-changelog CHANGELOG.md && git add CHANGELOG.md",
+    "preversion": "yarn build && yarn test:coverage && yarn changelog:verify",
+    "version": "yarn changelog:version",
+    "start": "ts-node scripts/sendEmail.ts"
   },
   "repository": {
     "type": "git",
