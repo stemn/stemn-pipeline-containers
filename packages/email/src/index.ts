@@ -1,8 +1,10 @@
 import Bluebird from 'bluebird';
 import { openSync, pathExists, readFile, stat } from 'fs-extra';
+import walk from 'klaw';
 import Markdown from 'markdown-it';
+import match from 'micromatch';
 import { basename, join } from 'path';
-import request from 'request-promise';
+import requestPromise from 'request-promise';
 
 const md = Markdown({
   html: true,
@@ -45,6 +47,24 @@ function encodeAttachments (filepaths: string[], limit: number) {
 }
 
 /**
+ * Expand globs relative to the pipeline root
+ */
+function matchAttachmentGlobs (globs: string[], root: string) {
+  const absoluteGlobs = globs.map((glob: string) => join(root, glob));
+  const matchGlobs = (paths: string[]) => match(paths, absoluteGlobs);
+
+  const collectPaths = () => <Promise<string[]>> new Promise((resolve, reject) => {
+    const paths: string[] = [];
+    walk(root)
+      .on('error', (err) => reject(err))
+      .on('data', (path: string) => paths.push(path))
+      .on('end', () => resolve(paths));
+  });
+
+  return collectPaths().then(matchGlobs);
+}
+
+/**
  * Render markdown content to html, create sendgrid content object with plaintext fallback
  */
 function renderContent (content: string) {
@@ -84,14 +104,15 @@ export function sendEmail () {
   const personalizations = toEmails.map((email) => ({ to: { email } }));
 
   const generateAttachments = () => {
-    const attachmentPaths: string[] = JSON.parse(<string> attachmentFiles).map((path: string) => join(pipelineRoot, path));
-    return encodeAttachments(attachmentPaths, Number(attachmentLimit));
+    const globs: string[] = JSON.parse(<string> attachmentFiles);
+    return matchAttachmentGlobs(globs, pipelineRoot)
+      .then((matches) => encodeAttachments(matches, Number(attachmentLimit)));
   };
 
   const attachments = attachmentFiles ? generateAttachments() : [];
   const content = renderContent(emailContent);
 
-  request.post('https://api.sendgrid.com/v3/mail/send', {
+  requestPromise.post('https://api.sendgrid.com/v3/mail/send', {
     headers: { Authorization: `Bearer ${ sendgridAuth }` },
     body: {
       from: stemnEmail,
