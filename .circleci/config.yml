@@ -32,7 +32,7 @@ jobs:
       - run: yarn lerna run build
       - persist_to_workspace:
           root: '.'
-          paths: ["**/build"]
+          paths: ["*"]
 
   lintTest:
     <<: *defaults
