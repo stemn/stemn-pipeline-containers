@@ -1,5 +1,6 @@
 {
   "name": "stemn-pipeline-containers",
+  "private": true,
   "version": "0.0.1",
   "description": "Official Stemn Pipeline Containers",
   "main": "index.js",
@@ -22,11 +23,15 @@
   },
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "devDependencies": {
-    "tslint": "^5.9.1",
+    "jest": "^23.2.0",
+    "lerna": "^2.11.0",
+    "ts-jest": "^23.0.0",
+    "ts-node": "^7.0.0",
+    "tslint": "^5.10.0",
     "tslint-config-temando": "^1.5.11",
-    "typescript": "^2.7.2"
+    "typescript": "^2.9.2"
   },
-  "dependencies": {
-    "axios": "^0.18.0"
-  }
+  "workspaces": [
+    "packages/*"
+  ]
 }

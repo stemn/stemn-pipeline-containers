@@ -1,0 +1,42 @@
+{
+  "name": "@stemn/email",
+  "version": "1.0.0",
+  "description": "A container for emailing files and results of a Stemn pipeline.",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "yarn test --coverage",
+    "build": "yarn build:project && yarn build:container",
+    "build:container": "docker build -t stemn/email .",
+    "build:project": "tsc",
+    "release": "bump --tag --push",
+    "changelog:verify": "changelog-verify CHANGELOG.md",
+    "changelog:version": "version-changelog CHANGELOG.md && git add CHANGELOG.md",
+    "preversion": "yarn build && yarn test:coverage && yarn changelog:verify",
+    "version": "yarn changelog:version",
+    "start": "ts-node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stemn/stemn-pipeline-containers.git"
+  },
+  "author": "Jackson Delahunt",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "fs-extra": "^6.0.1",
+    "markdown-it": "^8.4.1",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "@types/bluebird": "^3.5.21",
+    "@types/markdown-it": "^0.0.4",
+    "@types/node": "^10.5.1",
+    "tslint-config-temando": "^1.5.11",
+    "typescript": "^2.9.2",
+    "jest": "^23.2.0",
+    "nodemon": "^1.14.12",
+    "ts-jest": "^23.0.0",
+    "version-bump-prompt": "^4.0.0"
+  }
+}
