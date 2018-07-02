@@ -4,7 +4,7 @@ import walk from 'klaw';
 import Markdown from 'markdown-it';
 import match from 'micromatch';
 import { basename, join } from 'path';
-import requestPromise from 'request-promise';
+import http from 'axios';
 
 const md = Markdown({
   html: true,
@@ -16,7 +16,7 @@ const md = Markdown({
  * Check the combined attachments do not exceed the specified limit
  */
 function withinAttachmentLimit (filepaths: string[], limit: number) {
-  const getFileSize = (fp: string) => stat(fp).then((stats) => stats.size);
+  const getFileSize = (filepath: string) => stat(filepath).then((stats) => stats.size);
   return Bluebird.map(filepaths, getFileSize)
     .then((sizes: number[]) => sizes.reduce((acc, size) => acc + size, 0) <= limit);
 }
@@ -27,7 +27,10 @@ function withinAttachmentLimit (filepaths: string[], limit: number) {
 function encodeAttachment (filepath: string) {
   const fd = openSync(filepath, 'r');
   return readFile(fd)
-    .then((data: Buffer) => ({ filename: basename(filepath), content: data.toString('base64') }))
+    .then((data: Buffer) => ({ 
+      filename: basename(filepath),
+      content: data.toString('base64'),
+    }))
     .catch((e: Error) => console.log(e.message)); // tslint:disable-line:no-console
 }
 
@@ -37,12 +40,10 @@ function encodeAttachment (filepath: string) {
 function encodeAttachments (filepaths: string[], limit: number) {
   return Bluebird.filter(filepaths, pathExists).then((paths: string[]) => {
     return withinAttachmentLimit(paths, limit)
-      .then((within: boolean) => {
-        if (!within) {
-          throw new Error('Attachment limit exceeded');
-        }
-        return Bluebird.map(paths, encodeAttachment);
-      });
+      .then((within: boolean) => within 
+          ? Bluebird.map(paths, encodeAttachment)
+          : Promise.reject(new Error('Attachment limit exceeded'))
+      );
   });
 }
 
@@ -50,16 +51,16 @@ function encodeAttachments (filepaths: string[], limit: number) {
  * Expand globs relative to the pipeline root
  */
 function matchAttachmentGlobs (globs: string[], root: string) {
-  const absoluteGlobs = globs.map((glob: string) => join(root, glob));
-  const matchGlobs = (paths: string[]) => match(paths, absoluteGlobs);
-
   const collectPaths = () => <Promise<string[]>> new Promise((resolve, reject) => {
     const paths: string[] = [];
     walk(root)
-      .on('error', (err) => reject(err))
+      .on('error', (err: Error) => reject(err))
       .on('data', (path: string) => paths.push(path))
       .on('end', () => resolve(paths));
   });
+
+  const absoluteGlobs = globs.map((glob: string) => join(root, glob));
+  const matchGlobs = (paths: string[]) => match(paths, absoluteGlobs);
 
   return collectPaths().then(matchGlobs);
 }
@@ -79,6 +80,17 @@ function renderContent (content: string) {
   return [htmlContent, plaintext];
 }
 
+export interface IEmailEnv extends NodeJS.ProcessEnv {
+  STEMN_PIPELINE_ROOT: string;
+  STEMN_PIPELINE_PARAMS_TO: string;
+  STEMN_PIPELINE_PARAMS_SUBJECT: string;
+  STEMN_PIPELINE_PARAMS_STEMN_EMAIL: string;
+  STEMN_PIPELINE_PARAMS_BODY: string;
+  STEMN_PIPELINE_PARAMS_ATTACHMENTS?: string; 
+  STEMN_MAX_ATTACHMENTS: string;
+  STEMN_SENDGRID_AUTH: string;
+}
+
 export function sendEmail () {
 
   const {
@@ -88,31 +100,25 @@ export function sendEmail () {
     STEMN_PIPELINE_PARAMS_STEMN_EMAIL: stemnEmail = 'bot@stemn.com',
     STEMN_PIPELINE_PARAMS_BODY: emailContent = '',
     STEMN_PIPELINE_PARAMS_ATTACHMENTS: attachmentFiles,
-    STEMN_PIPELINE_PARAMS_MAX_ATTACHMENTS: attachmentLimit = 30e6,
-    STEMN_PIPELINE_SENDGRID_AUTH: sendgridAuth,
-  } = process.env;
+    STEMN_SENDGRID_AUTH: sendgridAuth,
+    STEMN_MAX_ATTACHMENTS_SIZE,
+  } = <IEmailEnv> process.env;
 
-  if (!pipelineRoot) {
-    throw new Error('Pipeline root not defined');
-  }
+  const attachmentLimit: number = Number(STEMN_MAX_ATTACHMENTS_SIZE) || 30e6;
 
-  if (!sendgridAuth) {
-    throw new Error('SendGrid token not defined');
-  }
-
-  const toEmails: string[] = JSON.parse(<string> emailRecipients);
+  const toEmails: string[] = JSON.parse(emailRecipients);
   const personalizations = toEmails.map((email) => ({ to: { email } }));
 
-  const generateAttachments = () => {
-    const globs: string[] = JSON.parse(<string> attachmentFiles);
+  const generateAttachments = (attachmentGlobs: string) => {
+    const globs: string[] = JSON.parse(attachmentGlobs);
     return matchAttachmentGlobs(globs, pipelineRoot)
       .then((matches) => encodeAttachments(matches, Number(attachmentLimit)));
   };
 
-  const attachments = attachmentFiles ? generateAttachments() : [];
+  const attachments = attachmentFiles ? generateAttachments(attachmentFiles) : [];
   const content = renderContent(emailContent);
 
-  requestPromise.post('https://api.sendgrid.com/v3/mail/send', {
+  http.post('https://api.sendgrid.com/v3/mail/send', {
     headers: { Authorization: `Bearer ${ sendgridAuth }` },
     json: true,
     body: {
@@ -124,5 +130,4 @@ export function sendEmail () {
       attachments,
     },
   });
-
 }
