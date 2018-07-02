@@ -1,4 +1,5 @@
-# 📦 Stemn Pipeline Containers
+# Stemn Pipeline Containers
+[![CircleCI](https://circleci.com/gh/stemn/stemn-pipeline-containers/tree/master.svg?style=svg&circle-token=882a992e43cc79230b4c60a7f065e293f08451f2)](https://circleci.com/gh/stemn/stemn-pipeline-containers/tree/master)
 
 Pre-packaged applications for use in Stemn pipelines.
 
