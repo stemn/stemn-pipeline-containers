@@ -5,7 +5,11 @@
   "description": "Official Stemn Pipeline Containers",
   "main": "index.js",
   "scripts": {
-    "lint": "yarn tslint --project tsconfig.lint.json"
+    "lint": "yarn lerna run lint",
+    "changelog:verify": "yarn lerna run changelog:verify",
+    "test": "yarn lerna run test",
+    "test:coverage": "yarn lerna run test:coverage",
+    "build": "yarn lerna run build"
   },
   "repository": {
     "type": "git",

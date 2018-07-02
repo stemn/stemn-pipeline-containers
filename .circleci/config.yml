@@ -37,7 +37,7 @@ jobs:
       - checkout
       - *restoreCache
       - *attachWorkspace
-      - run: yarn lerna run lint
+      - run: yarn lint
 
   unitTest:
     <<: *defaults
@@ -46,7 +46,7 @@ jobs:
       - checkout
       - *restoreCache
       - *attachWorkspace
-      - run: yarn lerna run test:coverage
+      - run: yarn test:coverage
 
   changelogTest:
     <<: *defaults
@@ -55,7 +55,7 @@ jobs:
       - checkout
       - *restoreCache
       - *attachWorkspace
-      - run: yarn lerna run changelog:verify
+      - run: yarn changelog:verify
 
   deploy:
     <<: *defaults
