@@ -1,7 +1,7 @@
-import archiver from 'archiver';
+import * as archiver from 'archiver';
 import { readJson } from 'fs-extra';
 import { post } from 'hyperquest-promise';
-import match from 'micromatch';
+import * as match from 'micromatch';
 import { join } from 'path';
 
 const {
