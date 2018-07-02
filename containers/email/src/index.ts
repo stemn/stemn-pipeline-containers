@@ -9,8 +9,7 @@ const {
   STEMN_PIPELINE_TOKEN,
 } = process.env;
 
-export const sendEmail = () => {
-
+export function sendEmail () {
   console.log({ // tslint:disable-line
     STEMN_PIPELINE_ID,
     STEMN_PIPELINE_PARAMS_TO,
@@ -19,7 +18,4 @@ export const sendEmail = () => {
     STEMN_PIPELINE_PARAMS_ATTACHMENTS,
     STEMN_PIPELINE_TOKEN,
   });
-
 };
-
-export default sendEmail();
