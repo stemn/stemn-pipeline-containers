@@ -21,7 +21,10 @@ jobs:
     steps:
       - checkout
       - *restoreCache
-      - run: yarn lerna bootstrap
+      - run:
+          command: |
+            yarn
+            yarn lerna bootstrap
       - save_cache:
           paths: [node_modules]
           key: deps-{{ checksum "package.json" }}
