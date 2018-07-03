@@ -21,14 +21,18 @@ jobs:
     steps:
       - checkout
       - *restoreCache
-      - run: yarn lerna bootstrap
+      - setup_remote_docker
+      - run:
+          command: |
+            yarn
+            yarn lerna bootstrap
       - save_cache:
           paths: [node_modules]
           key: deps-{{ checksum "package.json" }}
       - run: yarn lerna run build
       - persist_to_workspace:
           root: '.'
-          paths: ["**/build"]
+          paths: ["*"]
 
   lintTest:
     <<: *defaults

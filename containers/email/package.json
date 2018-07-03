@@ -5,6 +5,7 @@
   "scripts": {
     "test": "jest",
     "test:coverage": "yarn test --coverage",
+    "lint": "tslint --project tsconfig.json",
     "build": "yarn build:project && yarn build:container",
     "build:container": "docker build -t stemn/email .",
     "build:project": "tsc",
@@ -13,13 +14,13 @@
     "changelog:version": "version-changelog CHANGELOG.md && git add CHANGELOG.md",
     "preversion": "yarn build && yarn test:coverage && yarn changelog:verify",
     "version": "yarn changelog:version",
-    "start": "ts-node"
+    "start": "ts-node scripts/sendEmail.ts"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stemn/stemn-pipeline-containers.git"
   },
-  "author": "Jackson Delahunt",
+  "author": "Caspian Baska",
   "license": "MIT",
   "dependencies": {
     "@types/axios": "^0.14.0",

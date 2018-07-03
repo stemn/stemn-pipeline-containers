@@ -9,8 +9,7 @@
     "pretty": true,
     "noUnusedLocals": true,
     "lib": [
-      "es2015",
-      "es2016"
+      "es2015"
     ]
   }
 }

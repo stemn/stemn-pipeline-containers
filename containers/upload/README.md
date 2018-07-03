@@ -6,7 +6,7 @@ Files are uploaded to the same location as created in the pipeline.
 
 # Sample Configuration
 
-```
+```yaml
 $schema: https://schemas.stemn.com/pipeline+v1
 
 label: Convert gear

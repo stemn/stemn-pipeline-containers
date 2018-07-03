@@ -1,7 +1,7 @@
-import archiver from 'archiver';
+import * as archiver from 'archiver';
 import { readJson } from 'fs-extra';
 import { post } from 'hyperquest-promise';
-import match from 'micromatch';
+import * as match from 'micromatch';
 import { join } from 'path';
 
 const {
@@ -15,7 +15,7 @@ const {
   STEMN_PIPELINE_TOKEN,
 } = process.env;
 
-const getFiles = () => {
+export function getFiles () {
 
   return readJson(join(STEMN_PIPELINE_TMP, 'changes')).then((changes) => {
 
@@ -27,22 +27,7 @@ const getFiles = () => {
   });
 };
 
-const zipFiles = (files: string[]) => {
-
-  const archive = archiver('zip', { zlib: { level: 9 } });
-
-  // remove '/pipeline/' prefix from zip file paths
-  const stripPipelinePrefix = (path: string) => path.replace(new RegExp(`^${STEMN_PIPELINE_ROOT}/`, 'g'), '');
-
-  console.log('Uploading:\n', files.map(stripPipelinePrefix).join('\n')); // tslint:disable-line
-
-  files.forEach((file) => archive.file(file, { name: stripPipelinePrefix(file) }));
-  archive.finalize();
-
-  return archive;
-};
-
-const upload = (files: string[]) => {
+export function upload (files: string[]) {
 
   const url = `${STEMN_API_PROTOCOL}://${STEMN_API_HOST}:${STEMN_API_PORT}/api/v1/pipelines/${STEMN_PIPELINE_ID}`;
   const options = {
@@ -60,6 +45,17 @@ const upload = (files: string[]) => {
   return destination;
 };
 
-export default getFiles()
-  .then(upload)
-  .catch(() => process.exit(3));
+function zipFiles (files: string[]) {
+
+  const archive = archiver('zip', { zlib: { level: 9 } });
+
+  // remove '/pipeline/' prefix from zip file paths
+  const stripPipelinePrefix = (path: string) => path.replace(new RegExp(`^${STEMN_PIPELINE_ROOT}/`, 'g'), '');
+
+  console.log('Uploading:\n', files.map(stripPipelinePrefix).join('\n')); // tslint:disable-line
+
+  files.forEach((file) => archive.file(file, { name: stripPipelinePrefix(file) }));
+  archive.finalize();
+
+  return archive;
+};
