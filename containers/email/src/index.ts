@@ -1,10 +1,10 @@
-import Bluebird from 'bluebird';
+import * as Bluebird from 'bluebird';
 import { openSync, pathExists, readFile, stat } from 'fs-extra';
-import walk from 'klaw';
-import Markdown from 'markdown-it';
-import match from 'micromatch';
+import * as walk from 'klaw';
+import * as Markdown from 'markdown-it';
+import * as match from 'micromatch';
 import { basename, join } from 'path';
-import http from 'axios';
+import request, { AxiosResponse } from 'axios';
 
 const md = Markdown({
   html: true,
@@ -118,10 +118,9 @@ export function sendEmail () {
   const attachments = attachmentFiles ? generateAttachments(attachmentFiles) : [];
   const content = renderContent(emailContent);
 
-  http.post('https://api.sendgrid.com/v3/mail/send', {
+  request.post('https://api.sendgrid.com/v3/mail/send', {
     headers: { Authorization: `Bearer ${ sendgridAuth }` },
-    json: true,
-    body: {
+    data: {
       from: stemnEmail,
       'reply-to': { email: stemnEmail },
       subject,
@@ -129,5 +128,11 @@ export function sendEmail () {
       personalizations,
       attachments,
     },
-  });
+  }).then((res: AxiosResponse) => {
+      if (res.status !== 200) {
+        console.log(`Failed to send email: Received ${res.status} ${ res.statusText }` )
+        Promise.reject(new Error('Failed to send email via SendGrid')) 
+      }
+      return Promise.resolve();
+    });
 }

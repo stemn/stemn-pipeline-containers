@@ -1,5 +1,4 @@
 import request, { AxiosResponse } from 'axios';
-import { ClientResponse } from 'http';
 
 export interface ISlackEnv extends NodeJS.ProcessEnv {
   STEMN_PARAM_SLACK_CHANNEL: string;
