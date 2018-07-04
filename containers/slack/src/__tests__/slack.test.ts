@@ -16,24 +16,26 @@ describe('sending a Slack Notification', async () => {
   const channel = 'stemn';
   const text = 'test';
 
-  const env = {
-    STEMN_PARAM_SLACK_CHANNEL: channel,
-    STEMN_PARAM_SLACK_MESSAGE: text,
-    STEMN_PARAM_SLACK_URL: url,
-  };
-  Object.assign(process.env, env);
-
   let requestBody: any;
   let requestUrl: string;
-  nock(new RegExp('.*'))
+  let response: AxiosResponse;
+
+  beforeAll(async () => {
+    const env = {
+      STEMN_PARAM_SLACK_CHANNEL: channel,
+      STEMN_PARAM_SLACK_MESSAGE: text,
+      STEMN_PARAM_SLACK_URL: url,
+    };
+    Object.assign(process.env, env);
+    nock(new RegExp('.*'))
       .post(new RegExp('.*'))
       .reply(200)
-      .on('request', (req, intercept, body) => {
+      .on('request', (req: any, intercept: any, body: any) => {
         requestBody = body;
         requestUrl = req.url;
-      })
-  
-  const response: AxiosResponse = await sendSlackNotification();
+      });
+    response = await sendSlackNotification();
+  });
   
   it('requests the correct domain', () => expect(requestUrl).toBe(url));
   it('succeeds with a 200', () => expect(response.status).toBe(200));

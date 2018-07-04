@@ -19,8 +19,7 @@ export function collectPaths (root: string): Promise<string[]> {
  * Expand globs relative to a root directory
  */
 export function matchAttachmentGlobs (globs: string[], root: string) {
-  const absoluteGlobs = globs.map((glob: string) => join(root, glob));
+  const absoluteGlobs: string[] = globs.map((glob: string) => join(root, glob));
   const matchGlobs = (paths: string[]) => match(paths, absoluteGlobs);
-
   return collectPaths(root).then(matchGlobs);
 }

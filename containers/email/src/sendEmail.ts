@@ -63,6 +63,15 @@ export function renderSendGridContent (content: string) {
   return [htmlContent, plaintext];
 }
 
+/**
+ * Create an array of encoded attachments globbed relative to the root 
+ */
+const generateAttachments = (globJSON: string, root: string, limit: number) => {
+  const globs: string[] = JSON.parse(globJSON);
+  return matchAttachmentGlobs(globs, root)
+    .then((matches) => encodeAttachments(matches, Number(limit)));
+};
+
 export interface IEmailEnv extends NodeJS.ProcessEnv {
   STEMN_PIPELINE_ROOT: string;
   STEMN_PIPELINE_PARAMS_TO: string;
@@ -81,7 +90,7 @@ export function sendEmail (): Promise<AxiosResponse> {
     STEMN_PIPELINE_PARAMS_SUBJECT: subject = 'Update from Stemn pipeline',
     STEMN_PIPELINE_PARAMS_STEMN_EMAIL: stemnEmail = 'bot@stemn.com',
     STEMN_PIPELINE_PARAMS_BODY: emailContent = '',
-    STEMN_PIPELINE_PARAMS_ATTACHMENTS: attachmentFiles,
+    STEMN_PIPELINE_PARAMS_ATTACHMENTS: attachmentGlobJSON,
     STEMN_SENDGRID_AUTH: sendgridAuth,
     STEMN_MAX_ATTACHMENTS_SIZE,
   } = <IEmailEnv> process.env;
@@ -91,13 +100,10 @@ export function sendEmail (): Promise<AxiosResponse> {
   const toEmails: string[] = JSON.parse(emailRecipients);
   const personalizations = toEmails.map((email) => ({ to: { email } }));
 
-  const generateAttachments = (attachmentGlobs: string) => {
-    const globs: string[] = JSON.parse(attachmentGlobs);
-    return matchAttachmentGlobs(globs, pipelineRoot)
-      .then((matches) => encodeAttachments(matches, Number(attachmentLimit)));
-  };
+  const attachments = attachmentGlobJSON
+    ? generateAttachments(attachmentGlobJSON, pipelineRoot, attachmentLimit)
+    : [];
 
-  const attachments = attachmentFiles ? generateAttachments(attachmentFiles) : [];
   const content = renderSendGridContent(emailContent);
 
   return request.post('https://api.sendgrid.com/v3/mail/send', {
