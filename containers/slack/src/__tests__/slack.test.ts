@@ -28,6 +28,7 @@ describe('sending a Slack Notification', async () => {
     };
     Object.assign(process.env, env);
     nock(new RegExp('.*'))
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
       .post(new RegExp('.*'))
       .reply(200)
       .on('request', (req: any, intercept: any, body: any) => {

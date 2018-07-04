@@ -58,6 +58,7 @@ describe('sending an email with no attachments', () => {
   let response: any;
   beforeAll(async () => {
     nock('https://api.sendgrid.com')
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
       .post('/v3/mail/send')
       .reply(200)
       .on('request', (req: any, interceptor: any, body: any) => {
@@ -80,6 +81,7 @@ describe('sending email with attachment', () => {
     });
 
     nock('https://api.sendgrid.com')
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
       .post('/v3/mail/send')
       .reply(200)
       .on('request', (req: any, interceptor: any, body: any) => {
