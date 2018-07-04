@@ -24,7 +24,9 @@
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
+    "@types/nock": "^9.3.0",
     "@types/node": "^10.5.1",
+    "nock": "^9.4.1",
     "nodemon": "^1.14.12",
     "tslint-config-temando": "^1.5.11",
     "typescript": "^2.9.2",
