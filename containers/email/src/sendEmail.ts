@@ -116,12 +116,11 @@ export function sendEmail (): Promise<AxiosResponse> {
       personalizations,
       attachments,
     },
-  }).then((res: AxiosResponse) => {
+  }).then((res) => {
       if (res.status !== 200) {
         console.log(`Failed to send email: Received ${res.status} ${ res.statusText }` )
-        Promise.reject(new Error('Failed to send email via SendGrid'))
+        throw new Error('Failed to send email via SendGrid');
       }
-
-      return Promise.resolve(res);
+      return res;
     });
 }

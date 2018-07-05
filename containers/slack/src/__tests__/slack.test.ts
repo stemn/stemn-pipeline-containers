@@ -10,14 +10,12 @@ afterAll(() => {
   nock.enableNetConnect();
 });
 
-describe('sending a Slack Notification', async () => {
-
+describe('sending a Slack Notification', () => {
   const url = 'https://www.slack.com/bigtoken';
   const channel = 'stemn';
   const text = 'test';
 
   let requestBody: any;
-  let requestUrl: string;
   let response: AxiosResponse;
 
   beforeAll(async () => {
@@ -27,19 +25,19 @@ describe('sending a Slack Notification', async () => {
       STEMN_PARAM_SLACK_URL: url,
     };
     Object.assign(process.env, env);
-    nock(new RegExp('.*'))
+
+    nock(/.*/)
       .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
-      .post(new RegExp('.*'))
-      .reply(200)
-      .on('request', (req: any, intercept: any, body: any) => {
-        requestBody = body;
-        requestUrl = req.url;
+      .post(/.*/)
+      .reply(200,  (uri: string, body: string) => {
+        requestBody = JSON.parse(body);
       });
+
     response = await sendSlackNotification();
   });
   
-  it('requests the correct domain', () => expect(requestUrl).toBe(url));
+  it('requests the correct domain', () => expect(response.config.url).toBe(url));
   it('succeeds with a 200', () => expect(response.status).toBe(200));
   it('has the correct channel', () => expect(requestBody.channel).toBe(channel));
   it('has the correct text', () => expect(requestBody.text).toBe(text));
-})
+});

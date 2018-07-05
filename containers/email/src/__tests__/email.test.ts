@@ -28,12 +28,16 @@ jest.mock('fs-extra', () => ({
   stat: jest.fn(mockStat),
 }))
 
-jest.mock('../sendEmail', () => ({
+jest.mock('../sendEmail', () => {
+  const module = require('../sendEmail');
+  return {
+    ...module,
     encodeSendGridAttachment: jest.fn(mockEncode),
-}));
+  };
+});
 
 import { sendEmail } from "../sendEmail";
-const nock = require('nock')
+const nock = require('nock');
 
 beforeAll(() => {
   // Emails to hit
@@ -56,14 +60,14 @@ afterAll(() => {
 describe('sending an email with no attachments', () => {
   let requestBody: any;
   let response: any;
+
   beforeAll(async () => {
     nock('https://api.sendgrid.com')
       .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
       .post('/v3/mail/send')
-      .reply(200)
-      .on('request', (req: any, interceptor: any, body: any) => {
-        requestBody = body;
-      })
+      .reply(200, (uri: string, body: string ) => {
+        requestBody = JSON.parse(body);
+      });
 
      response = await sendEmail();
   });
@@ -72,8 +76,9 @@ describe('sending an email with no attachments', () => {
   it('sends an email with no attachments', () => expect(requestBody.attachments).toBe([]));
 })
 
-describe('sending email with attachment', () => {
+describe('sending email with attachment', async () => {
   let requestBody: any;
+
   beforeAll(async () => {
     // Extend with attachments
     Object.assign(process.env, {
@@ -83,13 +88,16 @@ describe('sending email with attachment', () => {
     nock('https://api.sendgrid.com')
       .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
       .post('/v3/mail/send')
-      .reply(200)
-      .on('request', (req: any, interceptor: any, body: any) => {
-        requestBody = body;
+      .reply(200, (uri: string, body: string ) => {
+        requestBody = JSON.parse(body);
       });
 
     return await sendEmail();
   })
+
+  afterAll(() => {
+    delete process.env['STEMN_PIPELINE_PARAMS_ATTACHMENTS'];
+  });
 
   it('correctly encodes attachments', () => {
     const convertToExpected = ((obj: any, {filename, content}: { filename: string, content: string }) => {
@@ -103,11 +111,22 @@ describe('sending email with attachment', () => {
   });
 });
 
-it('fails when attachment limit exceeded', () => {
-  // Extend with attachments and max attachment
-  Object.assign(process.env, {
-    STEMN_PIPELINE_PARAMS_ATTACHMENTS: JSON.stringify(Object.keys(mockFiles)),
-    STEMN_MAX_ATTACHMENTS: 1,
+describe('sending email with attachment', () => {
+  beforeAll(() => {
+    // Extend with attachments and max attachment
+    Object.assign(process.env, {
+      STEMN_PIPELINE_PARAMS_ATTACHMENTS: JSON.stringify(Object.keys(mockFiles)),
+      STEMN_MAX_ATTACHMENTS: 1,
+    });
   });
-  return expect(sendEmail()).toThrow(new RegExp('Attachment limit exceeded'));
-})
+
+  afterAll(() => {
+    delete process.env['STEMN_PIPELINE_PARAMS_ATTACHMENTS'];
+    delete process.env['STEMN_MAX_ATTACHMENTS'];
+  });
+
+  it('fails when attachment limit exceeded', () => {
+    return expect(sendEmail()).toThrow(new RegExp('Attachment limit exceeded'));
+  });
+
+});

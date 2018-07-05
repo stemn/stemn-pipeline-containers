@@ -6,7 +6,7 @@ export interface ISlackEnv extends NodeJS.ProcessEnv {
   STEMN_PARAM_SLACK_URL: string;
 }
 
-export function sendSlackNotification (): Promise<AxiosResponse> {
+export function sendSlackNotification () {
   const {
     STEMN_PARAM_SLACK_CHANNEL: channel,
     STEMN_PARAM_SLACK_MESSAGE: text,
@@ -21,11 +21,11 @@ export function sendSlackNotification (): Promise<AxiosResponse> {
   };
 
   return request.post(url, data)
-    .then((res: AxiosResponse) => {
+    .then((res) => {
       if (res.status !== 200) {
-        console.log(`Failed to send Slack message: Received ${res.status} ${ res.statusText }` )
-        Promise.reject(new Error('Failed to send Slack message')) 
+        console.log(`Failed to send Slack message: Received ${res.status} ${ res.statusText }` );
+        throw new Error('Failed to send Slack message');
       }
-      return Promise.resolve(res);
+      return res;
     });
 }
