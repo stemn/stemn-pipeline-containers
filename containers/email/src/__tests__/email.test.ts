@@ -26,7 +26,7 @@ const mockEncode = (filepath: string) => Promise.resolve({
 jest.mock('fs-extra', () => ({
   pathExists: jest.fn(mockPathExists),
   stat: jest.fn(mockStat),
-}))
+}));
 
 jest.mock('../sendEmail', () => {
   const module = require('../sendEmail');
@@ -36,7 +36,7 @@ jest.mock('../sendEmail', () => {
   };
 });
 
-import { sendEmail } from "../sendEmail";
+import { sendEmail } from '../sendEmail';
 const nock = require('nock');
 
 beforeAll(() => {
@@ -65,16 +65,16 @@ describe('sending an email with no attachments', () => {
     nock('https://api.sendgrid.com')
       .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
       .post('/v3/mail/send')
-      .reply(200, (uri: string, body: string ) => {
+      .reply(200, (uri: string, body: string) => {
         requestBody = JSON.parse(body);
       });
 
-     response = await sendEmail();
+    response = await sendEmail();
   });
 
   it('succeeds with 200', () => expect(response.status).toBe(200));
   it('sends an email with no attachments', () => expect(requestBody.attachments).toBe([]));
-})
+});
 
 describe('sending email with attachment', async () => {
   let requestBody: any;
@@ -88,22 +88,22 @@ describe('sending email with attachment', async () => {
     nock('https://api.sendgrid.com')
       .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
       .post('/v3/mail/send')
-      .reply(200, (uri: string, body: string ) => {
+      .reply(200, (uri: string, body: string) => {
         requestBody = JSON.parse(body);
       });
 
-    return await sendEmail();
-  })
+    return sendEmail();
+  });
 
   afterAll(() => {
-    delete process.env['STEMN_PIPELINE_PARAMS_ATTACHMENTS'];
+    delete process.env.STEMN_PIPELINE_PARAMS_ATTACHMENTS;
   });
 
   it('correctly encodes attachments', () => {
-    const convertToExpected = ((obj: any, {filename, content}: { filename: string, content: string }) => {
+    const convertToExpected = ((obj: any, { filename, content }: { filename: string, content: string }) => {
       const env: any = {};
       env[filename] = Buffer.from(content, 'base64').toString('ascii');
-      return Object.assign(obj, env);
+      return { ...obj, ...env };
     });
 
     const attachments = requestBody.attachments.map(convertToExpected);
@@ -121,8 +121,8 @@ describe('sending email with attachment', () => {
   });
 
   afterAll(() => {
-    delete process.env['STEMN_PIPELINE_PARAMS_ATTACHMENTS'];
-    delete process.env['STEMN_MAX_ATTACHMENTS'];
+    delete process.env.STEMN_PIPELINE_PARAMS_ATTACHMENTS;
+    delete process.env.STEMN_MAX_ATTACHMENTS;
   });
 
   it('fails when attachment limit exceeded', () => {

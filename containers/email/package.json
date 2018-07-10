@@ -23,6 +23,7 @@
   "author": "Caspian Baska",
   "license": "MIT",
   "dependencies": {
+    "@stemn/pipeline-logger": "^0.0.1",
     "@types/axios": "^0.14.0",
     "@types/micromatch": "^3.1.0",
     "axios": "^0.18.0",

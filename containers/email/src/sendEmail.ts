@@ -1,10 +1,10 @@
+import request, { AxiosResponse } from 'axios';
 import * as Bluebird from 'bluebird';
 import { openSync, pathExists, readFile, stat } from 'fs-extra';
 import * as Markdown from 'markdown-it';
 import { basename } from 'path';
-import request, { AxiosResponse } from 'axios';
 
-import { matchAttachmentGlobs } from './lib'
+import { matchAttachmentGlobs } from './lib';
 
 const md = Markdown({
   html: true,
@@ -43,7 +43,7 @@ export function encodeAttachments (filepaths: string[], limit: number) {
     return checkWithinAttachmentLimit(paths, limit)
       .then((within: boolean) => within
           ? Bluebird.map(paths, encodeSendGridAttachment)
-          : Promise.reject(new Error('Attachment limit exceeded'))
+          : Promise.reject(new Error('Attachment limit exceeded')),
       );
   });
 }
@@ -64,7 +64,7 @@ export function renderSendGridContent (content: string) {
 }
 
 /**
- * Create an array of encoded attachments globbed relative to the root 
+ * Create an array of encoded attachments globbed relative to the root
  */
 const generateAttachments = (globJSON: string, root: string, limit: number) => {
   const globs: string[] = JSON.parse(globJSON);
@@ -109,7 +109,7 @@ export function sendEmail (): Promise<AxiosResponse> {
   return request.post('https://api.sendgrid.com/v3/mail/send', {
     headers: { Authorization: `Bearer ${ sendgridAuth }` },
     data: {
-      from: stemnEmail,
+      'from': stemnEmail,
       'reply-to': { email: stemnEmail },
       subject,
       content,
@@ -118,7 +118,7 @@ export function sendEmail (): Promise<AxiosResponse> {
     },
   }).then((res) => {
       if (res.status !== 200) {
-        console.log(`Failed to send email: Received ${res.status} ${ res.statusText }` )
+        console.log(`Failed to send email: Received ${res.status} ${ res.statusText }`);
         throw new Error('Failed to send email via SendGrid');
       }
       return res;

@@ -1,4 +1,4 @@
-import { getFiles, upload } from "../src";
+import { getFiles, upload } from '../src';
 
 void getFiles()
   .then(upload)
