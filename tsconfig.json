@@ -1,15 +1,7 @@
 {
+  "extends": "./node_modules/@stemn/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "target": "es2015",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "declaration": true,
-    "sourceMap": true,
-    "strict": true,
-    "pretty": true,
-    "noUnusedLocals": true,
-    "lib": [
-      "es2015"
-    ]
-  }
+    "noEmit": true
+  },
+  "include": [ "**/*.ts" ]
 }

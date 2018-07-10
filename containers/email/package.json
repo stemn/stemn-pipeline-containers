@@ -43,7 +43,6 @@
     "nock": "^9.4.1",
     "nodemon": "^1.14.12",
     "ts-jest": "^23.0.0",
-    "tslint-config-temando": "^1.5.11",
     "typescript": "^2.9.2",
     "version-bump-prompt": "^4.0.0"
   }
