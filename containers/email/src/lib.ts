@@ -18,8 +18,10 @@ export function collectPaths (root: string): Promise<string[]> {
 /**
  * Expand globs relative to a root directory
  */
-export function matchAttachmentGlobs (globs: string[], root: string) {
+export async function matchAttachmentGlobs (globs: string[], root: string) {
   const absoluteGlobs: string[] = globs.map((glob: string) => join(root, glob));
-  const matchGlobs = (paths: string[]) => match(paths, absoluteGlobs);
-  return collectPaths(root).then(matchGlobs);
+  const pipelineFiles: string[] = await collectPaths(root);
+
+  const matches = match(pipelineFiles, absoluteGlobs);
+  return matches;
 }
