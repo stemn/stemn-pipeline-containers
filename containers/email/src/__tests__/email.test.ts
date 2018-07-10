@@ -16,7 +16,8 @@ MockFS(mockedFiles);
 
 const md = Markdown({
   html: true,
-  linkify: true, typographer: true,
+  linkify: true,
+  typographer: true,
 });
 
 // Global mock values
@@ -74,6 +75,7 @@ describe('sending an email with no attachments', () => {
 
 describe('sending email with attachment', async () => {
   let requestBody: any;
+
   beforeAll(async () => {
     // Extend with attachments
     Object.assign(process.env, {

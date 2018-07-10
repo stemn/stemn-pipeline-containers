@@ -11,6 +11,7 @@ module.exports = {
   },
   testPathIgnorePatterns: [
     '/build/',
+    '/dist/',
     '/node_modules/'
   ]
 }
