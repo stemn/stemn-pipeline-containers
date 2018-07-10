@@ -1,6 +1,7 @@
+import { log } from '@stemn/pipeline-logger';
 import request, { AxiosResponse } from 'axios';
 import * as Bluebird from 'bluebird';
-import * as fs from 'fs-extra';
+import { openSync, pathExists, readFile, stat } from 'fs-extra';
 import * as walk from 'klaw';
 import * as Markdown from 'markdown-it';
 import * as match from 'micromatch';
@@ -18,8 +19,7 @@ const md = Markdown({
 function collectPaths (root: string): Promise<string[]> {
   return new Promise((resolve, reject) => {
     const paths: string[] = [];
-    const options = { fs };
-    walk(root, options)
+    walk(root)
       .on('error', (err: Error) => reject(err))
       .on('data', (path: string) => paths.push(path))
       .on('end', () => resolve(paths));
@@ -38,62 +38,64 @@ function matchAttachmentGlobs (globs: string[], root: string) {
 /**
  * Check the combined attachments do not exceed the specified limit
  */
-export function checkWithinAttachmentLimit (filepaths: string[], limit: number) {
-  const getFileSize = (filepath: string) => fs.stat(filepath).then((stats) => stats.size);
+export async function checkWithinAttachmentLimit (filepaths: string[], limit: number) {
+  const getFileSize = (filepath: string) => stat(filepath).then((stats) => stats.size);
 
-  return Bluebird.map(filepaths, getFileSize)
-    .then((sizes: number[]) => sizes.reduce((acc, size) => acc + size, 0) <= limit);
+  const sizes: number[] = await Bluebird.map(filepaths, getFileSize);
+  const isWithinLimit = sizes.reduce((acc, size) => acc + size, 0) <= limit;
+  return isWithinLimit;
 }
 
 /**
  * Encode attachment to base64 and create sendgrid attachement object
  */
-export function encodeSendGridAttachment (filepath: string) {
-  const fd = fs.openSync(filepath, 'r');
-  return fs.readFile(fd)
-    .then((data: Buffer) => ({
-      filename: basename(filepath),
-      content: data.toString('base64'),
-    }))
-    .catch((e: Error) => console.log(e.message)); // tslint:disable-line:no-console
+export async function encodeSendGridAttachment (filepath: string) {
+  const filedata: Buffer = await readFile(openSync(filepath, 'r'));
+  return {
+    filename: basename(filepath),
+    content: filedata.toString('base64'),
+  };
 }
 
 /**
  * Determine valid attachments, ensure attachment set within size limit then encode to sendgrid attachment object
  */
-export function encodeAttachments (filepaths: string[], limit: number) {
-  return Bluebird.filter(filepaths, fs.pathExists).then((paths: string[]) => {
-    return checkWithinAttachmentLimit(paths, limit)
-      .then((within: boolean) => within
-        ? Bluebird.map(paths, encodeSendGridAttachment)
-        : Promise.reject(new Error('Attachment limit exceeded'))
-      );
-  });
+export async function encodeAttachments (filepaths: string[], limit: number) {
+  const paths: string[] = await Bluebird.filter(filepaths, pathExists);
+  const isWithinAttachmentLimit = await checkWithinAttachmentLimit(paths, limit);
+
+  return isWithinAttachmentLimit
+    ? Bluebird.map(paths, encodeSendGridAttachment)
+    : Promise.reject(new Error('Attachment limit exceeded'));
 }
 
 /**
  * Render markdown content to html, create sendgrid content object with plaintext fallback
  */
 export function renderSendGridContent (content: string) {
-  const htmlContent = {
+
+  const html = {
     type: 'text/html',
     value: md.render(content),
   };
+
   const plaintext = {
     type: 'text/plaintext',
     value: content,
   };
-  return [htmlContent, plaintext];
+
+  return [html, plaintext];
 }
 
 /**
- * Create an array of encoded attachments globbed relative to the root 
+ * Create an array of encoded attachments globbed relative to the root
  */
-export function generateAttachments (globJSON: string, root: string, limit: number) {
+async function generateAttachments (globJSON: string, root: string, limit: number) {
   const globs: string[] = JSON.parse(globJSON);
-  return matchAttachmentGlobs(globs, root)
-    .then((matches) => encodeAttachments(matches, limit));
-};
+  const matches = await matchAttachmentGlobs(globs, root);
+  const attachments = await encodeAttachments(matches, Number(limit));
+  return attachments;
+}
 
 export interface IEmailEnv extends NodeJS.ProcessEnv {
   STEMN_PIPELINE_ROOT: string;
@@ -106,7 +108,7 @@ export interface IEmailEnv extends NodeJS.ProcessEnv {
   STEMN_SENDGRID_AUTH: string;
 }
 
-export function sendEmail (): Promise<AxiosResponse> {
+export async function sendEmail (): Promise<AxiosResponse> {
   const {
     STEMN_PIPELINE_ROOT: pipelineRoot = '/pipeline',
     STEMN_PIPELINE_PARAMS_TO: emailRecipients,
@@ -129,21 +131,22 @@ export function sendEmail (): Promise<AxiosResponse> {
 
   const content = renderSendGridContent(emailContent);
 
-  return request.post('https://api.sendgrid.com/v3/mail/send', {
+  const response = await request.post('https://api.sendgrid.com/v3/mail/send', {
     headers: { Authorization: `Bearer ${sendgridAuth}` },
     data: {
-      from: stemnEmail,
+      'from': stemnEmail,
       'reply-to': { email: stemnEmail },
       subject,
       content,
       personalizations,
       attachments,
     },
-  }).then((res) => {
-    if (res.status !== 200) {
-      console.log(`Failed to send email: Received ${res.status} ${res.statusText}`)
-      throw new Error('Failed to send email via SendGrid');
-    }
-    return res;
   });
+
+  if (response.status !== 200) {
+    log(`Failed to send email: Received ${response.status} ${response.statusText}`);
+    throw new Error('Failed to send email via SendGrid');
+  }
+
+  return response;
 }

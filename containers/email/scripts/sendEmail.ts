@@ -1,3 +1,3 @@
-import { sendEmail } from "../src";
+import { sendEmail } from '../src';
 
-void sendEmail()
+void sendEmail();

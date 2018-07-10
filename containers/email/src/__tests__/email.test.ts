@@ -16,7 +16,7 @@ MockFS(mockedFiles);
 
 const md = Markdown({
   html: true,
-  linkify: true, typographer: true
+  linkify: true, typographer: true,
 });
 
 // Global mock values
@@ -55,18 +55,18 @@ describe('sending an email with no attachments', () => {
   });
 
   it('succeeds with 200', () => expect(response.status).toBe(200));
-  it('requests with correct auth header', () => expect(requestBody.headers.Authorization).toBe(`Bearer ${ sendGridAuth }`))
+  it('requests with correct auth header', () => expect(requestBody.headers.Authorization).toBe(`Bearer ${ sendGridAuth }`));
   it('sends an email with no attachments', () => expect(requestBody.data.attachments).toEqual([]));
   it('correctly renders markdown', () => {
     const expected = [
       {
         type: 'text/html',
-        value: md.render(emailContent)
+        value: md.render(emailContent),
       },
       {
         type: 'text/plaintext',
-        value: emailContent
-      }
+        value: emailContent,
+      },
     ];
     expect(requestBody.data.content).toEqual(expected);
   });
@@ -77,7 +77,7 @@ describe('sending email with attachment', async () => {
   beforeAll(async () => {
     // Extend with attachments
     Object.assign(process.env, {
-      STEMN_PIPELINE_PARAMS_ATTACHMENTS: JSON.stringify(['*.png'])
+      STEMN_PIPELINE_PARAMS_ATTACHMENTS: JSON.stringify(['*.png']),
     });
 
     nock('https://api.sendgrid.com')
@@ -87,18 +87,18 @@ describe('sending email with attachment', async () => {
         requestBody = JSON.parse(body);
       });
 
-    return await sendEmail();
+    return sendEmail();
   });
 
   afterAll(() => {
-    delete process.env['STEMN_PIPELINE_PARAMS_ATTACHMENTS'];
+    delete process.env.STEMN_PIPELINE_PARAMS_ATTACHMENTS;
   });
 
   it('correctly encodes attachments', () => {
     const convertToExpected = (obj: any, { filename, content }: { filename: string; content: string }) => {
       const env: any = {};
       env[filename] = Buffer.from(content, 'base64').toString('ascii');
-      return Object.assign(obj, env);
+      return { ...obj, ...env };
     };
 
     const attachments = requestBody.data.attachments.reduce(convertToExpected, {});
@@ -111,13 +111,13 @@ describe('sending email with attachments that exceed limit', () => {
     // Extend with attachments and max attachment
     Object.assign(process.env, {
       STEMN_PIPELINE_PARAMS_ATTACHMENTS: JSON.stringify(['*.txt']),
-      STEMN_MAX_ATTACHMENTS: 0
+      STEMN_MAX_ATTACHMENTS: 0,
     });
   });
 
   afterAll(() => {
-    delete process.env['STEMN_PIPELINE_PARAMS_ATTACHMENTS'];
-    delete process.env['STEMN_MAX_ATTACHMENTS'];
+    delete process.env.STEMN_PIPELINE_PARAMS_ATTACHMENTS;
+    delete process.env.STEMN_MAX_ATTACHMENTS;
   });
 
   it('fails when attachment limit exceeded', () => {

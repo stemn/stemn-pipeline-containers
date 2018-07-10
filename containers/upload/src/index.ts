@@ -1,3 +1,4 @@
+import { log } from '@stemn/pipeline-logger';
 import * as archiver from 'archiver';
 import { readJson } from 'fs-extra';
 import { post } from 'hyperquest-promise';
@@ -15,17 +16,16 @@ const {
   STEMN_PIPELINE_TOKEN,
 } = process.env;
 
-export function getFiles () {
+export async function getFiles () {
 
-  return readJson(join(STEMN_PIPELINE_TMP, 'changes')).then((changes) => {
+  const changes = await readJson(join(STEMN_PIPELINE_TMP, 'changes'));
 
-    const inputs = STEMN_PIPELINE_PARAMS_INPUT
-      ? JSON.parse(STEMN_PIPELINE_PARAMS_INPUT)
-      : '**';
+  const inputs = STEMN_PIPELINE_PARAMS_INPUT
+    ? JSON.parse(STEMN_PIPELINE_PARAMS_INPUT)
+    : '**';
 
-    return match(changes, inputs);
-  });
-};
+  return match(changes, inputs);
+}
 
 export function upload (files: string[]) {
 
@@ -43,7 +43,7 @@ export function upload (files: string[]) {
   const destination = post(url, options, source);
 
   return destination;
-};
+}
 
 function zipFiles (files: string[]) {
 
@@ -52,10 +52,10 @@ function zipFiles (files: string[]) {
   // remove '/pipeline/' prefix from zip file paths
   const stripPipelinePrefix = (path: string) => path.replace(new RegExp(`^${STEMN_PIPELINE_ROOT}/`, 'g'), '');
 
-  console.log('Uploading:\n', files.map(stripPipelinePrefix).join('\n')); // tslint:disable-line
+  log(`Uploading:\n ${files.map(stripPipelinePrefix).join('\n')}`);
 
   files.forEach((file) => archive.file(file, { name: stripPipelinePrefix(file) }));
   archive.finalize();
 
   return archive;
-};
+}

@@ -2,13 +2,14 @@
   "name": "@stemn/email",
   "version": "1.0.0",
   "description": "A container for emailing files and results of a Stemn pipeline.",
+  "main": "dist",
   "scripts": {
     "test": "jest",
     "test:coverage": "yarn test --coverage",
     "lint": "tslint --project tsconfig.json",
-    "build": "yarn build:project && yarn build:container",
+    "build": "yarn build:typescript && yarn build:container",
     "build:container": "docker build -t stemn/email .",
-    "build:project": "tsc",
+    "build:typescript": "tsc",
     "release": "bump --tag --push",
     "changelog:verify": "changelog-verify CHANGELOG.md",
     "changelog:version": "version-changelog CHANGELOG.md && git add CHANGELOG.md",
@@ -23,6 +24,7 @@
   "author": "Caspian Baska",
   "license": "MIT",
   "dependencies": {
+    "@stemn/pipeline-logger": "^0.0.2",
     "@types/axios": "^0.14.0",
     "@types/micromatch": "^3.1.0",
     "axios": "^0.18.0",
@@ -48,7 +50,6 @@
     "nodemon": "^1.14.12",
     "prettier": "^1.13.7",
     "ts-jest": "^23.0.0",
-    "tslint-config-temando": "^1.5.11",
     "typescript": "^2.9.2",
     "version-bump-prompt": "^4.0.0"
   }

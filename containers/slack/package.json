@@ -2,10 +2,11 @@
   "name": "@stemn/slack",
   "version": "1.0.0",
   "description": "A container for sending Slack notifications from a Stemn pipeline",
+  "main": "dist",
   "scripts": {
     "build": "yarn build:typescript && yarn build:container",
     "build:container": "docker build -t stemn/email .",
-    "build:typescript": "sh -v -e scripts/build.sh",
+    "build:typescript": "tsc",
     "release": "bump --tag --push",
     "start": "node dist"
   },
@@ -20,6 +21,7 @@
   },
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "dependencies": {
+    "@stemn/pipeline-logger": "^0.0.2",
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
@@ -29,8 +31,6 @@
     "mock-fs": "^4.5.0",
     "nock": "^9.4.1",
     "nodemon": "^1.14.12",
-    "prettier": "^1.13.7",
-    "tslint-config-temando": "^1.5.11",
     "typescript": "^2.9.2",
     "version-bump-prompt": "^4.0.0"
   }

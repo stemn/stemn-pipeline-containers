@@ -1,3 +1,4 @@
+import { log } from '@stemn/pipeline-logger';
 import request from 'axios';
 
 export interface ISlackEnv extends NodeJS.ProcessEnv {
@@ -6,7 +7,7 @@ export interface ISlackEnv extends NodeJS.ProcessEnv {
   STEMN_PARAM_SLACK_URL: string;
 }
 
-export function sendSlackNotification () {
+export async function sendSlackNotification () {
   const {
     STEMN_PARAM_SLACK_CHANNEL: channel,
     STEMN_PARAM_SLACK_MESSAGE: text,
@@ -20,11 +21,11 @@ export function sendSlackNotification () {
     text,
   };
 
-  return request.post(url, data).then((res) => {
-    if (res.status !== 200) {
-      console.log(`Failed to send Slack message: Received ${res.status} ${res.statusText}`);
-      throw new Error('Failed to send Slack message');
-    }
-    return res;
-  });
+  const response = await request.post(url, data);
+  if (response.status !== 200) {
+    log(`Failed to send Slack message: Received ${response.status} ${response.statusText}`);
+    throw new Error('Failed to send Slack message');
+  }
+
+  return response;
 }

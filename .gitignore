@@ -1,5 +1,6 @@
 node_modules
 yarn-error.log
+build
 dist
 .coverage
 /lerna-*
