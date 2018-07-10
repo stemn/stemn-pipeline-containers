@@ -18,7 +18,9 @@
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "devDependencies": {
     "@types/nock": "^9.3.0",
+    "mock-fs": "^4.5.0",
     "nock": "^9.4.1",
+    "prettier": "^1.13.7",
     "version-bump-prompt": "^4.0.0"
   }
 }

@@ -1,10 +1,10 @@
-import * as Bluebird from 'bluebird';
-import { openSync, pathExists, readFile, stat } from 'fs-extra';
-import * as Markdown from 'markdown-it';
-import { basename } from 'path';
 import request, { AxiosResponse } from 'axios';
-
-import { matchAttachmentGlobs } from './lib'
+import * as Bluebird from 'bluebird';
+import * as fs from 'fs-extra';
+import * as walk from 'klaw';
+import * as Markdown from 'markdown-it';
+import * as match from 'micromatch';
+import { basename, join } from 'path';
 
 const md = Markdown({
   html: true,
@@ -13,10 +13,33 @@ const md = Markdown({
 });
 
 /**
+ * Generate array of all filepaths below root
+ */
+function collectPaths (root: string): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    const paths: string[] = [];
+    const options = { fs };
+    walk(root, options)
+      .on('error', (err: Error) => reject(err))
+      .on('data', (path: string) => paths.push(path))
+      .on('end', () => resolve(paths));
+  });
+}
+
+/**
+ * Expand globs relative to a root directory
+ */
+function matchAttachmentGlobs (globs: string[], root: string) {
+  const absoluteGlobs: string[] = globs.map((glob: string) => join(root, glob));
+  const matchGlobs = (paths: string[]) => match(paths, absoluteGlobs);
+  return collectPaths(root).then(matchGlobs);
+}
+
+/**
  * Check the combined attachments do not exceed the specified limit
  */
 export function checkWithinAttachmentLimit (filepaths: string[], limit: number) {
-  const getFileSize = (filepath: string) => stat(filepath).then((stats) => stats.size);
+  const getFileSize = (filepath: string) => fs.stat(filepath).then((stats) => stats.size);
 
   return Bluebird.map(filepaths, getFileSize)
     .then((sizes: number[]) => sizes.reduce((acc, size) => acc + size, 0) <= limit);
@@ -26,8 +49,8 @@ export function checkWithinAttachmentLimit (filepaths: string[], limit: number) 
  * Encode attachment to base64 and create sendgrid attachement object
  */
 export function encodeSendGridAttachment (filepath: string) {
-  const fd = openSync(filepath, 'r');
-  return readFile(fd)
+  const fd = fs.openSync(filepath, 'r');
+  return fs.readFile(fd)
     .then((data: Buffer) => ({
       filename: basename(filepath),
       content: data.toString('base64'),
@@ -39,11 +62,11 @@ export function encodeSendGridAttachment (filepath: string) {
  * Determine valid attachments, ensure attachment set within size limit then encode to sendgrid attachment object
  */
 export function encodeAttachments (filepaths: string[], limit: number) {
-  return Bluebird.filter(filepaths, pathExists).then((paths: string[]) => {
+  return Bluebird.filter(filepaths, fs.pathExists).then((paths: string[]) => {
     return checkWithinAttachmentLimit(paths, limit)
       .then((within: boolean) => within
-          ? Bluebird.map(paths, encodeSendGridAttachment)
-          : Promise.reject(new Error('Attachment limit exceeded'))
+        ? Bluebird.map(paths, encodeSendGridAttachment)
+        : Promise.reject(new Error('Attachment limit exceeded'))
       );
   });
 }
@@ -66,10 +89,10 @@ export function renderSendGridContent (content: string) {
 /**
  * Create an array of encoded attachments globbed relative to the root 
  */
-const generateAttachments = (globJSON: string, root: string, limit: number) => {
+export function generateAttachments (globJSON: string, root: string, limit: number) {
   const globs: string[] = JSON.parse(globJSON);
   return matchAttachmentGlobs(globs, root)
-    .then((matches) => encodeAttachments(matches, Number(limit)));
+    .then((matches) => encodeAttachments(matches, limit));
 };
 
 export interface IEmailEnv extends NodeJS.ProcessEnv {
@@ -107,7 +130,7 @@ export function sendEmail (): Promise<AxiosResponse> {
   const content = renderSendGridContent(emailContent);
 
   return request.post('https://api.sendgrid.com/v3/mail/send', {
-    headers: { Authorization: `Bearer ${ sendgridAuth }` },
+    headers: { Authorization: `Bearer ${sendgridAuth}` },
     data: {
       from: stemnEmail,
       'reply-to': { email: stemnEmail },
@@ -117,10 +140,10 @@ export function sendEmail (): Promise<AxiosResponse> {
       attachments,
     },
   }).then((res) => {
-      if (res.status !== 200) {
-        console.log(`Failed to send email: Received ${res.status} ${ res.statusText }` )
-        throw new Error('Failed to send email via SendGrid');
-      }
-      return res;
-    });
+    if (res.status !== 200) {
+      console.log(`Failed to send email: Received ${res.status} ${res.statusText}`)
+      throw new Error('Failed to send email via SendGrid');
+    }
+    return res;
+  });
 }
