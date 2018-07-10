@@ -1,3 +1,4 @@
+import { log } from '@stemn/pipeline-logger';
 import * as archiver from 'archiver';
 import { readJson } from 'fs-extra';
 import { post } from 'hyperquest-promise';
@@ -51,7 +52,7 @@ function zipFiles (files: string[]) {
   // remove '/pipeline/' prefix from zip file paths
   const stripPipelinePrefix = (path: string) => path.replace(new RegExp(`^${STEMN_PIPELINE_ROOT}/`, 'g'), '');
 
-  console.log('Uploading:\n', files.map(stripPipelinePrefix).join('\n')); // tslint:disable-line
+  log(`Uploading:\n ${files.map(stripPipelinePrefix).join('\n')}`);
 
   files.forEach((file) => archive.file(file, { name: stripPipelinePrefix(file) }));
   archive.finalize();

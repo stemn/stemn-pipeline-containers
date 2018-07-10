@@ -1,12 +1,15 @@
 {
   "name": "@stemn/pipeline-logger",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Logger for use in Stemn pipelines",
   "main": "build",
   "repository": "git+https://github.com/stemn/stemn-pipeline-containers.git",
   "author": "Jackson Delahunt",
   "license": "MIT",
   "private": false,
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "chalk": "^2.4.1"
   },

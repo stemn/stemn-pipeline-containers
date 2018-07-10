@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.0.1",
   "description": "Official Stemn Pipeline Containers",
-  "main": "index.js",
   "scripts": {
     "lint": "yarn lerna run lint",
     "changelog:verify": "yarn lerna run changelog:verify",

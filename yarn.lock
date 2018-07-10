@@ -16,9 +16,9 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@stemn/pipeline-logger@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@stemn/pipeline-logger/-/pipeline-logger-0.0.1.tgz#d79d6d21f583e62400cc3ca175cb7a31cbc27433"
+"@stemn/pipeline-logger@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@stemn/pipeline-logger/-/pipeline-logger-0.0.2.tgz#70148ae9f0b7320019c477c513203c8ad403800d"
   dependencies:
     chalk "^2.4.1"
 

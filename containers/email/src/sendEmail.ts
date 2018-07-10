@@ -1,3 +1,4 @@
+import { log } from '@stemn/pipeline-logger';
 import request, { AxiosResponse } from 'axios';
 import * as Bluebird from 'bluebird';
 import { openSync, pathExists, readFile, stat } from 'fs-extra';
@@ -32,7 +33,7 @@ export function encodeSendGridAttachment (filepath: string) {
       filename: basename(filepath),
       content: data.toString('base64'),
     }))
-    .catch((e: Error) => console.log(e.message)); // tslint:disable-line:no-console
+    .catch((e: Error) => log(e.message));
 }
 
 /**
@@ -118,7 +119,7 @@ export function sendEmail (): Promise<AxiosResponse> {
     },
   }).then((res) => {
       if (res.status !== 200) {
-        console.log(`Failed to send email: Received ${res.status} ${ res.statusText }`);
+        log(`Failed to send email: Received ${res.status} ${ res.statusText }`);
         throw new Error('Failed to send email via SendGrid');
       }
       return res;
