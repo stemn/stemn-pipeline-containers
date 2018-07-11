@@ -1,23 +1,15 @@
 import { log } from '@stemn/pipeline-logger';
 import request, { AxiosResponse } from 'axios';
 import * as Bluebird from 'bluebird';
-import { openSync, pathExists, readFile, stat } from 'fs-extra';
-import * as walk from 'klaw';
+import { readFile, stat } from 'fs-extra';
+import * as walk from 'klaw-sync';
 import * as Markdown from 'markdown-it';
 import * as match from 'micromatch';
 import { basename, join } from 'path';
 
-/**
- * Generate array of all filepaths below root
- */
-function getPipelineFiles (root: string): Promise<string[]> {
-  return new Promise((resolve, reject) => {
-    const paths: string[] = [];
-    walk(root)
-      .on('error', (err: Error) => reject(err))
-      .on('data', (file) => paths.push(file.path))
-      .on('end', () => resolve(paths));
-  });
+export async function getFileSize (filepath: string): Promise<number> {
+  const { size } = await stat(filepath);
+  return size;
 }
 
 /**
@@ -25,28 +17,17 @@ function getPipelineFiles (root: string): Promise<string[]> {
  */
 async function matchAttachmentGlobs (globs: string[], root: string) {
   const absoluteGlobs: string[] = globs.map((glob: string) => join(root, glob));
-  const pipelineFiles: string[] = await getPipelineFiles(root);
+  const pipelineFiles: string[] = walk(root, { nodir: true }).map((file) => file.path);
 
   const attachments = match(pipelineFiles, absoluteGlobs);
   return attachments;
 }
 
 /**
- * Check the combined attachments do not exceed the specified limit
- */
-async function checkWithinAttachmentLimit (filepaths: string[], limit: number) {
-  const getFileSize = (filepath: string) => stat(filepath).then((stats) => stats.size);
-
-  const sizes: number[] = await Bluebird.map(filepaths, getFileSize);
-  const isWithinLimit = sizes.reduce((acc, size) => acc + size, 0) <= limit;
-  return isWithinLimit;
-}
-
-/**
  * Encode attachment to base64 and create sendgrid attachement object
  */
 async function encodeSendGridAttachment (filepath: string) {
-  const filedata: Buffer = await readFile(openSync(filepath, 'r'));
+  const filedata = await readFile(filepath);
   return {
     filename: basename(filepath),
     content: filedata.toString('base64'),
@@ -57,12 +38,14 @@ async function encodeSendGridAttachment (filepath: string) {
  * Determine valid attachments, ensure attachment set within size limit then encode to sendgrid attachment object
  */
 async function encodeAttachments (filepaths: string[], limit: number) {
-  const paths: string[] = await Bluebird.filter(filepaths, pathExists);
-  const isWithinAttachmentLimit = await checkWithinAttachmentLimit(paths, limit);
+  const sizes: number[] = await Bluebird.map(filepaths, getFileSize);
+  const isWithinAttachmentLimit = sizes.reduce((acc, size) => acc + size, 0) <= limit;
 
-  return isWithinAttachmentLimit
-    ? Bluebird.map(paths, encodeSendGridAttachment)
-    : Promise.reject(new Error('Attachment limit exceeded'));
+  if (!isWithinAttachmentLimit) {
+    throw new Error('Attachment limit exceeded');
+  }
+
+  return Bluebird.map(filepaths, encodeSendGridAttachment);
 }
 
 /**

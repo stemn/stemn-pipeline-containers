@@ -1,18 +1,19 @@
-// const mockFs = () => undefined;
-// mockFs.restore = () => undefined;
-
 const mockFs = require('mock-fs');
+import * as fs from 'fs-extra';
 import * as Markdown from 'markdown-it';
 import * as nock from 'nock';
 
 const { sendEmail } = require('../sendEmail');
 
 // Mocked file objects
-const mockedFiles = {
+const mockedFiles: { [key: string]: string | Buffer } = {
   '/pipeline/test.txt': 'foo bar baz',
   '/pipeline/girtbysea.txt': 'bar',
   '/pipeline/images/a.png': Buffer.from([8, 6, 7, 5, 3, 0, 9]),
 };
+
+jest.mock('fs-extra');
+fs.stat.mockImplementation((filename: string) => mockedFiles[filename].length);
 
 const markdown = Markdown({
   html: true,
