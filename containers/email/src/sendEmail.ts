@@ -7,12 +7,6 @@ import * as Markdown from 'markdown-it';
 import * as match from 'micromatch';
 import { basename, join } from 'path';
 
-const md = Markdown({
-  html: true,
-  linkify: true,
-  typographer: true,
-});
-
 /**
  * Generate array of all filepaths below root
  */
@@ -40,7 +34,7 @@ async function matchAttachmentGlobs (globs: string[], root: string) {
 /**
  * Check the combined attachments do not exceed the specified limit
  */
-export async function checkWithinAttachmentLimit (filepaths: string[], limit: number) {
+async function checkWithinAttachmentLimit (filepaths: string[], limit: number) {
   const getFileSize = (filepath: string) => stat(filepath).then((stats) => stats.size);
 
   const sizes: number[] = await Bluebird.map(filepaths, getFileSize);
@@ -51,7 +45,7 @@ export async function checkWithinAttachmentLimit (filepaths: string[], limit: nu
 /**
  * Encode attachment to base64 and create sendgrid attachement object
  */
-export async function encodeSendGridAttachment (filepath: string) {
+async function encodeSendGridAttachment (filepath: string) {
   const filedata: Buffer = await readFile(openSync(filepath, 'r'));
   return {
     filename: basename(filepath),
@@ -62,7 +56,7 @@ export async function encodeSendGridAttachment (filepath: string) {
 /**
  * Determine valid attachments, ensure attachment set within size limit then encode to sendgrid attachment object
  */
-export async function encodeAttachments (filepaths: string[], limit: number) {
+async function encodeAttachments (filepaths: string[], limit: number) {
   const paths: string[] = await Bluebird.filter(filepaths, pathExists);
   const isWithinAttachmentLimit = await checkWithinAttachmentLimit(paths, limit);
 
@@ -74,10 +68,15 @@ export async function encodeAttachments (filepaths: string[], limit: number) {
 /**
  * Render markdown content to html, create sendgrid content object with plaintext fallback
  */
-export function renderSendGridContent (content: string) {
+function renderSendGridContent (content: string) {
   return [{
     type: 'text/html',
-    value: md.render(content),
+    value: Markdown({
+      html: true,
+      linkify: true,
+      typographer: true,
+    })
+    .render(content),
   }, {
     type: 'text/plaintext',
     value: content,
