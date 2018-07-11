@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "yarn lerna run lint",
     "changelog:verify": "yarn lerna run changelog:verify",
-    "test": "yarn jest",
+    "test": "jest",
     "test:coverage": "yarn lerna run test:coverage",
     "build": "yarn lerna run build"
   },

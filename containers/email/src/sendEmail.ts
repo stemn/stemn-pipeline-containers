@@ -16,7 +16,7 @@ const md = Markdown({
 /**
  * Generate array of all filepaths below root
  */
-function collectPaths (root: string): Promise<string[]> {
+function getPipelineFiles (root: string): Promise<string[]> {
   return new Promise((resolve, reject) => {
     const paths: string[] = [];
     walk(root)
@@ -29,10 +29,12 @@ function collectPaths (root: string): Promise<string[]> {
 /**
  * Expand globs relative to a root directory
  */
-function matchAttachmentGlobs (globs: string[], root: string) {
+async function matchAttachmentGlobs (globs: string[], root: string) {
   const absoluteGlobs: string[] = globs.map((glob: string) => join(root, glob));
-  const matchGlobs = (paths: string[]) => match(paths, absoluteGlobs);
-  return collectPaths(root).then(matchGlobs);
+  const pipelineFiles: string[] = await getPipelineFiles(root);
+
+  const attachments = match(pipelineFiles, absoluteGlobs);
+  return attachments;
 }
 
 /**
@@ -73,25 +75,19 @@ export async function encodeAttachments (filepaths: string[], limit: number) {
  * Render markdown content to html, create sendgrid content object with plaintext fallback
  */
 export function renderSendGridContent (content: string) {
-
-  const html = {
+  return [{
     type: 'text/html',
     value: md.render(content),
-  };
-
-  const plaintext = {
+  }, {
     type: 'text/plaintext',
     value: content,
-  };
-
-  return [html, plaintext];
+  }];
 }
 
 /**
  * Create an array of encoded attachments globbed relative to the root
  */
-async function generateAttachments (globJSON: string, root: string, limit: number) {
-  const globs: string[] = JSON.parse(globJSON);
+async function generateAttachments (globs: string[], root: string, limit: number) {
   const matches = await matchAttachmentGlobs(globs, root);
   const attachments = await encodeAttachments(matches, Number(limit));
   return attachments;
@@ -122,13 +118,14 @@ export async function sendEmail (): Promise<AxiosResponse> {
 
   const attachmentLimit: number = Number(STEMN_MAX_ATTACHMENTS_SIZE) || 30e6;
 
-  const toEmails: string[] = JSON.parse(emailRecipients);
-  const personalizations = toEmails.map((email) => ({ to: { email } }));
+  const emails: string[] = JSON.parse(emailRecipients);
+  const personalizations = emails.map((email) => ({ to: { email } }));
 
-  const attachments = attachmentGlobJSON
-    ? generateAttachments(attachmentGlobJSON, pipelineRoot, attachmentLimit)
+  const attachmentGlobs: string[] = attachmentGlobJSON
+    ? JSON.parse(attachmentGlobJSON)
     : [];
 
+  const attachments = await generateAttachments(attachmentGlobs, pipelineRoot, attachmentLimit);
   const content = renderSendGridContent(emailContent);
 
   const response = await request.post('https://api.sendgrid.com/v3/mail/send', {
