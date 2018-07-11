@@ -1,8 +1,11 @@
-import * as Markdown from 'markdown-it';
-import * as nock from 'nock';
-import { sendEmail } from '../sendEmail';
+// const mockFs = () => undefined;
+// mockFs.restore = () => undefined;
 
 const mockFs = require('mock-fs');
+import * as Markdown from 'markdown-it';
+import * as nock from 'nock';
+
+const { sendEmail } = require('../sendEmail');
 
 // Mocked file objects
 const mockedFiles = {
@@ -11,7 +14,7 @@ const mockedFiles = {
   '/pipeline/images/a.png': Buffer.from([8, 6, 7, 5, 3, 0, 9]),
 };
 
-const md = Markdown({
+const markdown = Markdown({
   html: true,
   linkify: true,
   typographer: true,
@@ -32,7 +35,6 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  mockFs.restore();
   nock.enableNetConnect();
 });
 
@@ -66,7 +68,7 @@ describe('sending an email with no attachments', () => {
 
     const expected = [{
       type: 'text/html',
-      value: md.render(emailContent),
+      value: markdown.render(emailContent),
     }, {
       type: 'text/plaintext',
       value: emailContent,
@@ -116,6 +118,11 @@ describe('sending email with attachments that exceed limit', () => {
       STEMN_PIPELINE_PARAMS_ATTACHMENTS: JSON.stringify(['*.txt']),
       STEMN_MAX_ATTACHMENTS: 0,
     });
+
+    nock('https://api.sendgrid.com')
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+      .post('/v3/mail/send')
+      .reply(200);
   });
 
   afterAll(() => {
@@ -124,6 +131,6 @@ describe('sending email with attachments that exceed limit', () => {
   });
 
   it('fails when attachment limit exceeded', () => {
-    return expect(sendEmail()).toThrow(/Attachment limit exceeded/);
+    return expect(sendEmail).toThrow(/Attachment limit exceeded/);
   });
 });

@@ -15,7 +15,7 @@ function getPipelineFiles (root: string): Promise<string[]> {
     const paths: string[] = [];
     walk(root)
       .on('error', (err: Error) => reject(err))
-      .on('data', (path: string) => paths.push(path))
+      .on('data', (file) => paths.push(file.path))
       .on('end', () => resolve(paths));
   });
 }
