@@ -10,6 +10,7 @@
     "build": "yarn build:typescript && yarn build:container",
     "build:container": "docker build -t stemn/email .",
     "build:typescript": "tsc",
+    "build:watch": "tsc --watch",
     "release": "bump --tag --push",
     "changelog:verify": "changelog-verify CHANGELOG.md",
     "changelog:version": "version-changelog CHANGELOG.md && git add CHANGELOG.md",
