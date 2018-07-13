@@ -5,6 +5,7 @@
   "main": "dist",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
     "test:coverage": "yarn test --coverage",
     "lint": "tslint --project tsconfig.json",
     "build": "yarn build:typescript && yarn build:container",
