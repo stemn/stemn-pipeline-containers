@@ -4,6 +4,7 @@
   "description": "A container for uploading output files from a pipeline back to Stemn.",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
     "test:coverage": "yarn test --coverage",
     "lint": "tslint --project tsconfig.json",
     "build": "yarn build:project && yarn build:container",
