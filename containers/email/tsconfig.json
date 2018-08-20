@@ -1,7 +1,14 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "build",
+    "target": "es2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "pretty": true,
+    "noUnusedLocals": true
   },
-  "include": ["**/*.ts"]
+  "include": ["src"]
 }

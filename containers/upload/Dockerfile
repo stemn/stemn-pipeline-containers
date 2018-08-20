@@ -1,11 +1,17 @@
-FROM stemn/pipeline-base:latest
+FROM node:10-alpine AS build
 
 WORKDIR /app
-
 ADD package.json package.json
 ADD yarn.lock yarn.lock
-RUN yarn
+RUN yarn install
 
-ADD dist dist
+ADD tsconfig.json tsconfig.json
+ADD src src
+RUN yarn build:typescript
 
-ENTRYPOINT cd /app && yarn start
+RUN yarn install --production
+
+FROM stemn/pipeline-base:latest
+COPY --from=build /app /app
+WORKDIR /app
+ENTRYPOINT yarn start
