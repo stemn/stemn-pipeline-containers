@@ -3,7 +3,7 @@ FROM node:10-alpine AS build
 WORKDIR /app
 ADD package.json package.json
 ADD yarn.lock yarn.lock
-RUN yarn install
+RUN yarn install --ignore-engines
 
 ADD tsconfig.json tsconfig.json
 ADD src src
