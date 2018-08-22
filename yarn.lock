@@ -546,6 +546,10 @@
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.1.tgz#53f349bb986ab273d601175aa1b25a655ab90ee3"
 
+"@stemn/jest-config@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@stemn/jest-config/-/jest-config-0.0.2.tgz#d10db69d12678511b62103c60834e52b422af30d"
+
 "@types/archiver@^2.1.1":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@types/archiver/-/archiver-2.1.2.tgz#e84960d4872570d7c826589cd57f2c076bf198c5"
