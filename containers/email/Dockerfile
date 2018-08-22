@@ -9,7 +9,7 @@ ADD tsconfig.json tsconfig.json
 ADD src src
 RUN yarn build:typescript
 
-RUN yarn install --production
+RUN yarn install --production --ignore-engines
 
 FROM stemn/pipeline-base:latest
 COPY --from=build /app /app
