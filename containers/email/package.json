@@ -36,6 +36,7 @@
     "@types/node": "^10.7.1",
     "jest": "^23.5.0",
     "nodemon": "^1.18.3",
+    "ts-jest": "^23.1.4",
     "typescript": "^3.0.1",
     "version-bump-prompt": "^4.0.0"
   }
