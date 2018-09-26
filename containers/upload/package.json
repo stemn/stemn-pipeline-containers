@@ -15,7 +15,7 @@
     "changelog:version": "version-changelog CHANGELOG.md && git add CHANGELOG.md",
     "preversion": "yarn build && yarn test:coverage && yarn changelog:verify",
     "version": "yarn changelog:version",
-    "start": "ts-node scripts/uploadFiles.ts"
+    "start": "node build/scripts/uploadFiles"
   },
   "repository": {
     "type": "git",

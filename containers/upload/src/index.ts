@@ -5,7 +5,7 @@ import * as match from 'micromatch';
 import { join } from 'path';
 
 const {
-  STEMN_API_HOST = 'test',
+  STEMN_API_HOST = 'api.stemn',
   STEMN_API_PORT = 3000,
   STEMN_API_PROTOCOL = 'http',
   STEMN_PIPELINE_ID,
@@ -13,18 +13,17 @@ const {
   STEMN_PIPELINE_ROOT = '/pipeline',
   STEMN_PIPELINE_TMP = '/pipeline/.stemn',
   STEMN_PIPELINE_TOKEN,
-} = process.env;
+} = <any> process.env;
 
-export function getFiles () {
+export async function getFiles () {
 
-  return readJson(join(STEMN_PIPELINE_TMP, 'changes')).then((changes) => {
+  const changes: string[] = await readJson(join(STEMN_PIPELINE_TMP, 'changes'));
 
-    const inputs = STEMN_PIPELINE_PARAMS_INPUT
-      ? JSON.parse(STEMN_PIPELINE_PARAMS_INPUT)
-      : '**';
+  const inputs = STEMN_PIPELINE_PARAMS_INPUT
+    ? JSON.parse(STEMN_PIPELINE_PARAMS_INPUT)
+    : '**';
 
-    return match(changes, inputs);
-  });
+  return match(changes, inputs);
 };
 
 export function upload (files: string[]) {
