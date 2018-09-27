@@ -32,6 +32,7 @@
     "fs-extra": "^7.0.0",
     "hyperquest-promise": "^0.0.3",
     "micromatch": "^3.1.9",
+    "node-fetch": "^2.2.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
   },
@@ -40,6 +41,7 @@
     "@types/fs-extra": "^5.0.4",
     "@types/micromatch": "^3.1.0",
     "@types/node": "^10.7.1",
+    "@types/node-fetch": "^2.1.2",
     "changelog-verify": "^1.1.0",
     "typescript": "^3.0.1",
     "version-bump-prompt": "^4.0.0",

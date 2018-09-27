@@ -1,7 +1,7 @@
 import * as archiver from 'archiver';
 import { readJson } from 'fs-extra';
-import { post } from 'hyperquest-promise';
 import * as match from 'micromatch';
+import fetch from 'node-fetch';
 import { join } from 'path';
 
 const {
@@ -27,21 +27,15 @@ export async function getFiles () {
 };
 
 export function upload (files: string[]) {
-
-  const url = `${STEMN_API_PROTOCOL}://${STEMN_API_HOST}:${STEMN_API_PORT}/api/v1/pipelines/${STEMN_PIPELINE_ID}`;
-  const options = {
+  return fetch(`${STEMN_API_PROTOCOL}://${STEMN_API_HOST}:${STEMN_API_PORT}/api/v1/pipelines/${STEMN_PIPELINE_ID}`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${STEMN_PIPELINE_TOKEN}`,
       'Content-Disposition': `attachment;filename=${STEMN_PIPELINE_ID}.zip`,
       'Content-Type': 'application/zip',
     },
-  };
-
-  const source = zipFiles(files);
-  const destination = post(url, options, source);
-
-  return destination;
+    body: zipFiles(files),
+  });
 };
 
 function zipFiles (files: string[]) {
