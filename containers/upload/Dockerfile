@@ -1,4 +1,4 @@
-FROM stemn/pipeline-base:latest
+FROM stemn/pipeline-base:latest as build
 WORKDIR /app
 
 ADD package.json package.json
@@ -11,5 +11,10 @@ ADD scripts scripts
 RUN yarn build:typescript
 
 RUN yarn install --production
+
+FROM stemn/pipeline-base:latest
+WORKDIR /app
+
+COPY --from=build /app /app
 
 ENTRYPOINT cd /app && yarn start
