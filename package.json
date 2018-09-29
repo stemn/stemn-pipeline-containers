@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "devDependencies": {
+    "@stemn/jest-config": "^0.0.7",
     "@types/jest": "^23.3.1",
     "jest": "^23.5.0",
     "lerna": "^3.1.1",
