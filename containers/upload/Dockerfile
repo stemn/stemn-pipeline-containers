@@ -8,7 +8,7 @@ RUN yarn install
 ADD tsconfig.json tsconfig.json
 ADD src src
 ADD scripts scripts
-RUN yarn build:typescript
+RUN yarn build:typescript || true
 
 RUN yarn install --production
 

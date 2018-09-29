@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "yarn lerna run lint",
     "changelog:verify": "yarn lerna run changelog:verify",
-    "test": "yarn jest",
+    "test": "yarn lerna run test",
     "test:coverage": "yarn lerna run test:coverage",
     "build": "yarn lerna run build"
   },
@@ -27,9 +27,7 @@
   },
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "devDependencies": {
-    "@stemn/jest-config": "^0.0.7",
-    "@types/jest": "^23.3.1",
-    "jest": "^23.5.0",
+    "@stemn/jest-config": "^0.0.9",
     "lerna": "^3.1.1",
     "typescript": "^3.0.1"
   },

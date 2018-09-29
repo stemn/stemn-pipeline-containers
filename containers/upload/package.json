@@ -30,14 +30,13 @@
   "dependencies": {
     "archiver": "^3.0.0",
     "fs-extra": "^7.0.0",
-    "hyperquest-promise": "^0.0.3",
     "micromatch": "^3.1.9",
     "node-fetch": "^2.2.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
-    "@stemn/jest-config": "^0.0.7",
+    "@stemn/jest-config": "^0.0.9",
     "@types/archiver": "^2.1.1",
     "@types/fs-extra": "^5.0.4",
     "@types/micromatch": "^3.1.0",
