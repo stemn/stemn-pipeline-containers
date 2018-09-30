@@ -14,7 +14,7 @@ describe('File upload functionality', () => {
     ];
 
     readJson.mockResolvedValue(changes);
-    
+
     const changedFiles = await getFiles();
     expect(changedFiles).toMatchObject(changes);
   });

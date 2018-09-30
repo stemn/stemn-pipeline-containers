@@ -1,9 +1,8 @@
 {
 	"extends":[
-    "tslint-config-temando"
+    "@stemn/tslint-config"
   ],
   "rules": {
-    "no-default-export": false,
     "no-any": true,
     "no-implicit-dependencies": [true, "dev"]
   }

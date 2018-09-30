@@ -13,7 +13,7 @@ const {
   STEMN_PIPELINE_ROOT = '/pipeline',
   STEMN_PIPELINE_TMP = '/pipeline/.stemn',
   STEMN_PIPELINE_TOKEN,
-} = <any> process.env;
+} = process.env;
 
 export async function getFiles () {
 
@@ -24,7 +24,7 @@ export async function getFiles () {
     : '**';
 
   return match(changes, inputs);
-};
+}
 
 export function upload (files: string[]) {
   return fetch(`${STEMN_API_PROTOCOL}://${STEMN_API_HOST}:${STEMN_API_PORT}/api/v1/pipelines/${STEMN_PIPELINE_ID}`, {
@@ -36,7 +36,7 @@ export function upload (files: string[]) {
     },
     body: zipFiles(files),
   });
-};
+}
 
 function zipFiles (files: string[]) {
 
@@ -51,4 +51,4 @@ function zipFiles (files: string[]) {
   archive.finalize();
 
   return archive;
-};
+}

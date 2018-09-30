@@ -18,4 +18,4 @@ export function sendEmail () {
     STEMN_PIPELINE_PARAMS_ATTACHMENTS,
     STEMN_PIPELINE_TOKEN,
   });
-};
+}
