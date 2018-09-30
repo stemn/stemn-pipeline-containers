@@ -50,7 +50,7 @@ jobs:
       - checkout
       - *restoreCache
       - *attachWorkspace
-      - run: yarn test:coverage
+      - run: yarn test
 
   changelogTest:
     <<: *defaults
