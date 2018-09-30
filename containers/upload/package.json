@@ -9,7 +9,7 @@
     "lint": "tslint --project tsconfig.json",
     "build": "yarn build:typescript && yarn build:container",
     "build:container": "docker build -t stemn/upload .",
-    "build:typescript": "tsc",
+    "build:typescript": "tsc || true",
     "release": "bump --tag --push",
     "changelog:verify": "changelog-verify CHANGELOG.md",
     "changelog:version": "version-changelog CHANGELOG.md && git add CHANGELOG.md",
