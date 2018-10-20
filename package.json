@@ -28,8 +28,8 @@
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "devDependencies": {
     "@stemn/jest-config": "^0.0.9",
-    "lerna": "^3.1.1",
-    "typescript": "^3.0.1"
+    "lerna": "^3.4.3",
+    "typescript": "^3.1.3"
   },
   "workspaces": [
     "containers/*"
