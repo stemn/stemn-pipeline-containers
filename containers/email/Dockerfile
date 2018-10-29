@@ -1,6 +1,6 @@
 FROM node:10-alpine AS build
-
 WORKDIR /app
+
 ADD package.json package.json
 ADD yarn.lock yarn.lock
 RUN yarn install --ignore-engines
@@ -12,6 +12,7 @@ RUN yarn build:typescript
 RUN yarn install --production --ignore-engines
 
 FROM stemn/pipeline-base:latest
-COPY --from=build /app /app
 WORKDIR /app
+
+COPY --from=build /app /app
 ENTRYPOINT yarn start

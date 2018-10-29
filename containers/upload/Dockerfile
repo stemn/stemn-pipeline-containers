@@ -16,5 +16,4 @@ FROM stemn/pipeline-base:latest
 WORKDIR /app
 
 COPY --from=build /app /app
-
 ENTRYPOINT cd /app && yarn start

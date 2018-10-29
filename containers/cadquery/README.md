@@ -2,7 +2,7 @@
 
 Processes [CadQuery](https://github.com/dcowden/cadquery) python scripts.
 
-# Sample Configuration
+## Sample Configuration
 
 ```yaml
 $schema: https://schemas.stemn.com/pipeline+v1
