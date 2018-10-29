@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/stemn/stemn-pipeline-containers#readme",
   "devDependencies": {
-    "version-bump-prompt": "^4.0.0"
+    "version-bump-prompt": "^4.2.1"
   },
   "dependencies": {}
 }
