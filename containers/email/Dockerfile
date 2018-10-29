@@ -1,12 +1,12 @@
 FROM node:10-alpine AS build
 WORKDIR /app
 
-ADD package.json package.json
-ADD yarn.lock yarn.lock
+COPY package.json package.json
+COPY yarn.lock yarn.lock
 RUN yarn install --ignore-engines
 
-ADD tsconfig.json tsconfig.json
-ADD src src
+COPY tsconfig.json tsconfig.json
+COPY src src
 RUN yarn build:typescript
 
 RUN yarn install --production --ignore-engines
