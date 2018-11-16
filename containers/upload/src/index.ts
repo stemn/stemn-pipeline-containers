@@ -1,7 +1,7 @@
 import * as archiver from 'archiver';
 import { readJson } from 'fs-extra';
 import * as match from 'micromatch';
-import fetch from 'node-fetch';
+import * as fetch from 'node-fetch';
 import { join } from 'path';
 
 const {
